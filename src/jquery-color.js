@@ -3,7 +3,7 @@
  * https://github.com/amazingSurge/color
  *
  * Copyright (c) 2013 amazingSurge
- * Licensed under the MIT license.
+ * Licensed under the GPL license.
  */
 
 
