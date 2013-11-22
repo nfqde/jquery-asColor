@@ -102,6 +102,27 @@
         equal(colorHex.toRGB(),'rgb(120,120,58)','change to RGB ok');
         equal(colorHex.toRGBA(),'rgba(120,120,58,1)','change to RGBA ok');
         equal(colorHex.toString(),'#78783a','change to string ok');
+
+        var colorRGBA = new this.color('rgba(50,50,50,0.5)');
+        equal(colorRGBA.toRGB(),'rgb(50,50,50)','RGBA change to RGB ok');
+        equal(colorRGBA.toHSL(),'hsl(0,0%,20%)','RGBA change to HSL ok');
+        equal(colorRGBA.toHEX(),'#323232','RGBA change to HEX ok');
+        equal(colorRGBA.toHSLA(),'hsla(0,0%,20%,0.5)','RGBA change to HSLA ok');
+
     });
+
+    // test('method', function() {
+    //     var color = new this.color('#999938');
+    //     equal(color.toHEX(),'#999938','get method ok');
+
+    //     color.set('rgb(42,42,26)');
+    //     equal(color.toHEX(),'','color set from rgb success');
+
+    //     color.set('#78783a');
+    //     equal(color.toHEX(),'#78783a','color set from hex success');
+
+    //     color.set('hsl(0,0%,20%)');
+    //     equal(color.toHEX(),'','color set from hsl success');
+    // });
 
   }(jQuery));
