@@ -1,9 +1,7 @@
-/*! color - v0.1.0 - 2013-07-23
+/*! color - v0.1.0 - 2013-11-22
 * https://github.com/amazingSurge/color
-* Copyright (c) 2013 joeylin; Licensed MIT */
+* Copyright (c) 2013 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
-    var namespace = 'colorInput';
-
     var expandHex = function(hex) {
         if (!hex) {
             return null;
@@ -132,9 +130,7 @@
 
     Color.prototype = {
         constructor: Color,
-        init: function(string, format, onChange) {
-            this.onChange = (typeof onChange === 'function') ? onChange : function() {};
-
+        init: function(string, format) {
             if (typeof format !== 'undefined') {
                 this.format(format);
             } else {
@@ -146,7 +142,6 @@
                     }
                 }
             }
-
             this.from(string);
         },
         from: function(string, format) {
@@ -202,11 +197,9 @@
             for (var i in color) {
                 if ("hsv".indexOf(i) !== -1) {
                     from_hsv++;
-
                     this.value[i] = color[i];
                 } else if ("rgb".indexOf(i) !== -1) {
                     from_rgb++;
-
                     this.value[i] = color[i];
                 } else if (i === 'a') {
                     this.value.a = color.a;

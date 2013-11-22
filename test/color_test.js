@@ -18,7 +18,7 @@
       strictEqual(actual, expected, [message])
       notStrictEqual(actual, expected, [message])
       throws(block, [expected], [message])
-  */
+      */
 
     module('color', {
         // This will run before each test in this module.
@@ -30,14 +30,13 @@
             hsl: 'hsl(0,100%, 50%)',
           };
         }
-      });
-
-    console.log($.colorValue);
+    });
       
 
-      test('color-hex ',function() {
+    test('color-hex ',function() {
         var color = new $.colorValue(this.hex);
 
+        console.log(this.hex);
 
         console.log(color.get());
 
@@ -54,73 +53,69 @@
 
 
         equal(
-            color.toRGBA(), 
-            'rgba(0,0,0,1)', 
-            "RGBA convert success"
-        );
+          color.toRGBA(), 
+          'rgba(0,0,0,1)', 
+          "RGBA convert success"
+          );
 
         equal(
-            color.toRGB(), 
-            'rgb(0,0,0)', 
-            "RGB convert success"
-        );
+          color.toRGB(), 
+          'rgb(0,0,0)', 
+          "RGB convert success"
+          );
 
         equal(
-            color.toHSLA(), 
-            'hsla(0,0%,0%,1)', 
-            "HSLA convert success"
-        );
+          color.toHSLA(), 
+          'hsla(0,0%,0%,1)', 
+          "HSLA convert success"
+          );
 
         equal(
-            color.toHEX(), 
-            '#000000', 
-            "RGBA convert success"
-        );
+          color.toHEX(), 
+          '#000000', 
+          "RGBA convert success"
+          );
 
         equal(
-            color.toString(), 
-            '#000000', 
-            "RGBA convert success"
-        );
+          color.toString(), 
+          '#000000', 
+          "RGBA convert success"
+          );    
+    });
 
-        
-      });
-
-      test('color-rgb ',function() {
+    test('color-rgb ',function() {
         var color = new $.colorValue(this.rgb);
 
-
-       equal(
-            color.toRGBA(), 
-            'rgba(0,0,0,1)', 
-            "RGBA convert success"
+        equal(
+          color.toRGBA(), 
+          'rgba(0,0,0,1)', 
+          "RGBA convert success"
         );
 
         equal(
-            color.toRGB(), 
-            'rgb(0,0,0)', 
-            "RGB convert success"
+          color.toRGB(), 
+          'rgb(0,0,0)', 
+          "RGB convert success"
         );
 
         equal(
-            color.toHSLA(), 
-            'hsla(0,0%,0%,1)', 
-            "HSLA convert success"
+          color.toHSLA(), 
+          'hsla(0,0%,0%,1)', 
+          "HSLA convert success"
         );
 
         equal(
-            color.toHEX(), 
-            '#000000', 
-            "RGBA convert success"
+          color.toHEX(), 
+          '#000000', 
+          "RGBA convert success"
         );
 
         equal(
-            color.toString(), 
-            '#000000', 
-            "RGBA convert success"
+          color.toString(), 
+          '#000000', 
+          "RGBA convert success"
         );
+ 
+    });
 
-        
-      });
-
-}(jQuery));
+  }(jQuery));

@@ -1,6 +1,6 @@
 /*
- * color
- * https://github.com/amazingSurge/color
+ * jquery-color
+ * https://github.com/amazingSurge/jquery-color
  *
  * Copyright (c) 2013 amazingSurge
  * Licensed under the GPL license.
@@ -8,8 +8,6 @@
 
 
 (function(window, document, $, undefined) {
-    var namespace = 'colorInput';
-
     var expandHex = function(hex) {
         if (!hex) {
             return null;
@@ -138,9 +136,7 @@
 
     Color.prototype = {
         constructor: Color,
-        init: function(string, format, onChange) {
-            this.onChange = (typeof onChange === 'function') ? onChange : function() {};
-
+        init: function(string, format) {
             if (typeof format !== 'undefined') {
                 this.format(format);
             } else {
@@ -152,7 +148,6 @@
                     }
                 }
             }
-
             this.from(string);
         },
         from: function(string, format) {
@@ -208,11 +203,9 @@
             for (var i in color) {
                 if ("hsv".indexOf(i) !== -1) {
                     from_hsv++;
-
                     this.value[i] = color[i];
                 } else if ("rgb".indexOf(i) !== -1) {
                     from_rgb++;
-
                     this.value[i] = color[i];
                 } else if (i === 'a') {
                     this.value.a = color.a;
