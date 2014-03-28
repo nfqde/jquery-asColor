@@ -1,6 +1,6 @@
-/*! color - v0.1.0 - 2013-11-22
-* https://github.com/amazingSurge/color
-* Copyright (c) 2013 amazingSurge; Licensed GPL */
+/*! asColor - v0.1.0 - 2014-03-28
+* https://github.com/amazingSurge/asColor
+* Copyright (c) 2014 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
     var expandHex = function(hex) {
         if (!hex) {
@@ -113,7 +113,7 @@
         }
     };
 
-    var Color = $.colorValue = function(string, format) {
+    var Color = $.asColor = function(string, format) {
         this.value = {
             r: 0,
             g: 0,

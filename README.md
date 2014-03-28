@@ -1,21 +1,21 @@
-# color
+# asColor
 
-the plugin used to change color value
+the plugin used to change asColor value
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
 
-[min]: https://raw.github.com/amazingSurge/color/master/dist/color.min.js
-[max]: https://raw.github.com/amazingSurge/color/master/dist/color.js
+[min]: https://raw.github.com/amazingSurge/jquery-asColor/master/dist/jquery-asColor.min.js
+[max]: https://raw.github.com/amazingSurge/jquery-asColor/master/dist/jquery-asColor.js
 
 In your web page:
 
 ```html
 <script src="jquery.js"></script>
-<script src="dist/color.min.js"></script>
+<script src="dist/jquery-asColor.min.js"></script>
 <script>
 jQuery(function($) {
-  var value = $.color($('input')[0].value);
+  var value = $.asColor($('input')[0].value);
 });
 </script>
 

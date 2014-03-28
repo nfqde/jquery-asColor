@@ -88,7 +88,7 @@ module.exports = function(grunt) {
         recess: {
             core: {
                 src: ["less/**/*.less"],
-                dest: 'css/color.css',
+                dest: 'css/asColor.css',
                 options: {
                     compile: true
                 }

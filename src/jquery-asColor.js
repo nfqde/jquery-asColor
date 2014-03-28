@@ -119,7 +119,7 @@
         }
     };
 
-    var Color = $.colorValue = function(string, format) {
+    var Color = $.asColor = function(string, format) {
         this.value = {
             r: 0,
             g: 0,
