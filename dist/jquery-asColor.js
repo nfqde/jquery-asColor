@@ -1,4 +1,4 @@
-/*! asColor - v0.1.0 - 2014-03-28
+/*! asColor - v0.1.0 - 2014-04-14
 * https://github.com/amazingSurge/asColor
 * Copyright (c) 2014 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -49,10 +49,10 @@
                     l: parseFloat(result[3] / 100)
                 };
 
-                return Color.HSLToRGB(hsl);
+                return AsColor.HSLToRGB(hsl);
             },
             to: function(color) {
-                var hsl = Color.RGBToHSL(color);
+                var hsl = AsColor.RGBToHSL(color);
                 return 'hsl(' + parseInt(hsl.h, 10) + ',' + Math.round(hsl.s * 100) + '%,' + Math.round(hsl.l * 100) + '%)';
             }
         },
@@ -66,10 +66,10 @@
                     a: parseFloat(result[4])
                 };
 
-                return Color.HSLToRGB(hsla);
+                return AsColor.HSLToRGB(hsla);
             },
             to: function(color) {
-                var hsl = Color.RGBToHSL(color);
+                var hsl = AsColor.RGBToHSL(color);
                 return 'hsla(' + parseInt(hsl.h, 10) + ',' + Math.round(hsl.s * 100) + '%,' + Math.round(hsl.l * 100) + '%,' + color.a + ')';
             }
         },
@@ -113,7 +113,7 @@
         }
     };
 
-    var Color = $.asColor = function(string, format) {
+    var AsColor = $.asColor = function(string, format) {
         this.value = {
             r: 0,
             g: 0,
@@ -128,8 +128,8 @@
         this.init(string, format);
     };
 
-    Color.prototype = {
-        constructor: Color,
+    AsColor.prototype = {
+        constructor: AsColor,
         init: function(string, format) {
             if (typeof format !== 'undefined') {
                 this.format(format);
@@ -206,7 +206,7 @@
                 }
             }
             if (from_rgb > from_hsv) {
-                var hsv = Color.RGBtoHSV(this.value);
+                var hsv = AsColor.RGBtoHSV(this.value);
                 if (this.value.r === 0 && this.value.g === 0 && this.value.b === 0) {
                     this.value.h = color.h;
                 } else {
@@ -216,7 +216,7 @@
                 this.value.s = hsv.s;
                 this.value.v = hsv.v;
             } else if (from_hsv > from_rgb) {
-                var rgb = Color.HSVtoRGB(this.value);
+                var rgb = AsColor.HSVtoRGB(this.value);
                 this.value.r = rgb.r;
                 this.value.g = rgb.g;
                 this.value.b = rgb.b;
@@ -224,7 +224,7 @@
         }
     };
 
-    Color.HSLToRGB = function(hsl) {
+    AsColor.HSLToRGB = function(hsl) {
         var h = hsl.h / 360,
             s = hsl.s,
             l = hsl.l,
@@ -236,9 +236,9 @@
         }
         m1 = l * 2 - m2;
         var rgb = {
-            r: Color.hueToRGB(m1, m2, h + (1 / 3)),
-            g: Color.hueToRGB(m1, m2, h),
-            b: Color.hueToRGB(m1, m2, h - (1 / 3))
+            r: AsColor.hueToRGB(m1, m2, h + (1 / 3)),
+            g: AsColor.hueToRGB(m1, m2, h),
+            b: AsColor.hueToRGB(m1, m2, h - (1 / 3))
         };
         if (typeof hsl.a !== 'undefined') {
             rgb.a = hsl.a;
@@ -248,7 +248,7 @@
         }
         return rgb;
     };
-    Color.hueToRGB = function(m1, m2, h) {
+    AsColor.hueToRGB = function(m1, m2, h) {
         var v;
         if (h < 0) {
             h = h + 1;
@@ -266,7 +266,7 @@
         }
         return Math.round(v * 255);
     };
-    Color.RGBToHSL = function(rgb) {
+    AsColor.RGBToHSL = function(rgb) {
         var r = rgb.r / 255,
             g = rgb.g / 255,
             b = rgb.b / 255,
@@ -300,18 +300,18 @@
             l: l
         };
     };
-    Color.RGBToHEX = function(rgb) {
+    AsColor.RGBToHEX = function(rgb) {
         return CssColorStrings.HEX.to(rgb);
     };
-    Color.HSLToHEX = function(hsl) {
-        var rgb = Color.HSLToRGB(hsl);
+    AsColor.HSLToHEX = function(hsl) {
+        var rgb = AsColor.HSLToRGB(hsl);
         return CssColorStrings.HEX.to(rgb);
     };
-    Color.HSVtoHEX = function(hsv) {
-        var rgb = Color.HSVtoRGB(hsv);
+    AsColor.HSVtoHEX = function(hsv) {
+        var rgb = AsColor.HSVtoRGB(hsv);
         return CssColorStrings.HEX.to(rgb);
     };
-    Color.RGBtoHSV = function(rgb) {
+    AsColor.RGBtoHSV = function(rgb) {
         var r = rgb.r / 255,
             g = rgb.g / 255,
             b = rgb.b / 255,
@@ -343,7 +343,7 @@
             v: v
         };
     };
-    Color.HSVtoRGB = function(hsv) {
+    AsColor.HSVtoRGB = function(hsv) {
         var r, g, b, h = (hsv.h % 360) / 60,
             s = hsv.s,
             v = hsv.v,
