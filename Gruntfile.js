@@ -114,23 +114,15 @@ module.exports = function(grunt) {
         }
     });
 
-    // These plugins provide necessary tasks.
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-
-    grunt.loadNpmTasks('grunt-jsbeautifier');
-    grunt.loadNpmTasks('grunt-recess');
-    grunt.loadNpmTasks('grunt-text-replace');
+    require('load-grunt-tasks')(grunt, {
+        pattern: ['grunt-*']
+    });
 
     // Default task.
     grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
     grunt.registerTask('dist', ['concat', 'uglify']);
 
     grunt.registerTask('js', ['jsbeautifier', 'jshint']);
-    grunt.registerTask('css', ['recess']);
 
     grunt.registerTask('version', [
         'replace:bower',
