@@ -27,5 +27,5 @@ jQuery(function($) {
   color.alpha(0.5);
   var value = color.val(); // hsla(0, 0%, 0%, 0.5)
 });
-```
 </script>
+```
