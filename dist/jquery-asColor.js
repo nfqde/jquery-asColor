@@ -264,9 +264,9 @@
         }
         m1 = l * 2 - m2;
         rgb = {
-            r: AsColor.hueToRGB(m1, m2, h + (1 / 3)),
+            r: AsColor.hueToRGB(m1, m2, h + 1 / 3),
             g: AsColor.hueToRGB(m1, m2, h),
-            b: AsColor.hueToRGB(m1, m2, h - (1 / 3))
+            b: AsColor.hueToRGB(m1, m2, h - 1 / 3)
         };
         if (typeof hsl.a !== 'undefined') {
             rgb.a = hsl.a;
@@ -288,7 +288,7 @@
         } else if ((h * 2) < 1) {
             v = m2;
         } else if ((h * 3) < 2) {
-            v = m1 + (m2 - m1) * ((2 / 3) - h) * 6;
+            v = m1 + (m2 - m1) * (2 / 3 - h) * 6;
         } else {
             v = m1;
         }

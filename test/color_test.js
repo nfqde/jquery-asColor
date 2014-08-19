@@ -40,9 +40,9 @@
 
         equal(color.val('RGBA(60,60,60)').toString(),'#3c3c3c','RGBA(60,60,60)');
 
-        equal(color.val('HSL(0, 0%, 24%)').toString(),'#3c3c3c',"HSL(0, 0%, 24%)");
+        equal(color.val('HSL(0, 0%, 24%)').toString(),'#3d3d3d',"HSL(0, 0%, 24%)");  /* ! */
 
-        equal(color.val('HSLA(0, 0%, 24%, 1)').toString(),'#3c3c3c',"HSLA(0, 0%, 24%, 1)");
+        equal(color.val('HSLA(0, 0%, 24%, 1)').toString(),'#3d3d3d',"HSLA(0, 0%, 24%, 1)");  /* ! */
 
         equal(color.val('TRANSPARENT').toString(),'transparent','TRANSPARENT');
     });
@@ -73,9 +73,9 @@
 
         equal(color.val('rgba(66, 50, 50, 1)').toString(),'#423232','val("rgb(66, 50, 50, 1)")');
 
-        equal(color.val('hsl(0, 14%, 23%)').toString(),'#423232','val("hsl(0, 14%, 23%)")');
+        equal(color.val('hsl(0, 14%, 23%)').toString(),'#433232','val("hsl(0, 14%, 23%)")'); /* ! */
 
-        equal(color.val('hsla(0, 14%, 23%, 1)').toString(),'#423232','val("hsla(0, 14%, 23%, 1)")');
+        equal(color.val('hsla(0, 14%, 23%, 1)').toString(),'#433232','val("hsla(0, 14%, 23%, 1)")'); /* ! */
 
         equal(color.val('transparent').toString(),'transparent','val("transparent")');
     });
@@ -252,6 +252,55 @@
         equal(color.toHEX(), '#332233', "#323 convert");
     });
 
+    test('color hsl ',function() {
+        var color = new $.asColor();
+        
+        color.val('#bada55');
+        equal(color.toHSL(),'hsl(74, 64%, 59%)', "#bada55 HSL convert");
+
+        color.val('#bad954');
+        equal(color.toHSL(),'hsl(74, 64%, 59%)', "#bad954 HSL convert");
+        
+        color.val('hsl(74, 64%, 59%)');
+        equal(color.toHEX(),'#bad954', "hsl(74, 64%, 59%) HEX convert");
+
+        color.val('#3d3d3d');
+        equal(color.toHSL(),'hsl(0, 0%, 24%)', "#3d3d3d HSL convert");
+
+        color.val('#3c3c3c');
+        equal(color.toHSL(),'hsl(0, 0%, 24%)', "#3c3c3c HSL convert");
+
+        color.val('#3d3d3d');
+        equal(color.toHSL(),'hsl(0, 0%, 24%)', "#3d3d3d HSL convert");
+
+        color.val('hsl(0, 0%, 24%)');
+        equal(color.toHEX(),'#3d3d3d', "hsl(0, 0%, 24%) HEX convert");
+
+
+        color.val('rgb(75, 96, 6)');
+        equal(color.toHSL(),'hsl(74, 88%, 20%)', "rgb(75, 96, 6) HSL convert");
+
+        color.val('hsl(74, 88%, 20%)');
+        equal(color.toRGB(),'rgb(75, 96, 6)', "hsl(74, 88%, 20%) RGB convert");
+        
+
+        color.val('rgba(117, 149, 9, 0.65)');
+        equal(color.toHSLA(),'hsla(74, 89%, 31%, 0.65)', "rgba(117, 149, 9, 0.65) HSL convert");
+
+        color.val('hsla(74, 89%, 31%, 0.65)');
+        equal(color.toRGBA(),'rgba(117, 149, 9, 0.65)', "hsla(74, 89%, 31%, 0.65) RGBA convert");
+
+        color.val('rgb(35, 22, 204)');
+        equal(color.toHSL(),'hsl(244, 81%, 44%)', "rgb(35, 22, 204) HSL convert");
+
+        color.val('rgb(33, 21, 203)');
+        equal(color.toHSL(),'hsl(244, 81%, 44%)', "rgb(33, 21, 203) HSL convert");
+
+        color.val('hsl(244, 81%, 44%)');
+        equal(color.toRGB(),'rgb(33, 21, 203)', "hsl(244, 81%, 44%) RGB convert");
+
+    });
+
 
     test('color #4fb9ee', function() {
         var color = new $.asColor('#4fb9ee');
@@ -305,11 +354,11 @@
 
     test('color hsl(244, 81%, 44%)', function() {
         var color = new $.asColor('hsl(244, 81%, 44%)');
-        equal(color.toRGB(),'rgb(35, 22, 204)','change to RGB');
-        equal(color.toRGBA(),'rgba(35, 22, 204, 1)','change to RGBA');
+        equal(color.toRGB(),'rgb(33, 21, 203)','change to RGB'); /* ! */
+        equal(color.toRGBA(),'rgba(33, 21, 203, 1)','change to RGBA'); /* ! */
         equal(color.toHSL(),'hsl(244, 81%, 44%)','change to HSL');
         equal(color.toHSLA(),'hsla(244, 81%, 44%, 1)','change to HSLA');
-        equal(color.toHEX(),'#2316cc','change to HEX');
+        equal(color.toHEX(),'#2115cb','change to HEX'); /* ! */
         equal(color.toString(),'hsl(244, 81%, 44%)','change to string');
     });
 }(jQuery));
