@@ -1,7 +1,9 @@
-/*! asColor - v0.1.2 - 2014-06-10
+/*! asColor - v0.1.3 - 2014-08-19
 * https://github.com/amazingSurge/asColor
 * Copyright (c) 2014 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
+    'use strict';
+
     var expandHex = function(hex) {
         if (!hex) {
             return null;
@@ -14,7 +16,7 @@
 
     var CssColorStrings = {
         RGB: {
-            match: /rgb\(\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*\)/,
+            match: /rgb\(\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*\)/i,
             parse: function(result) {
                 return {
                     r: (result[1].substr(-1) === '%') ? parseInt(result[1].slice(0, -1) * 2.55, 10) : parseInt(result[1], 10),
@@ -24,11 +26,11 @@
                 };
             },
             to: function(color) {
-                return "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+                return 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
             }
         },
         RGBA: {
-            match: /rgba\(\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*,\s*(\d?(?:\.\d+)?)\s*\)/,
+            match: /rgba\(\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*,\s*(\d{1,3}%?)\s*,\s*(\d?(?:\.\d+)?)\s*\)/i,
             parse: function(result) {
                 return {
                     r: (result[1].substr(-1) === '%') ? parseInt(result[1].slice(0, -1) * 2.55, 10) : parseInt(result[1], 10),
@@ -38,11 +40,11 @@
                 };
             },
             to: function(color) {
-                return "rgba(" + color.r + "," + color.g + "," + color.b + "," + color.a + ")";
+                return 'rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', ' + color.a + ')';
             }
         },
         HSL: {
-            match: /hsl\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*\)/,
+            match: /hsl\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*\)/i,
             parse: function(result) {
                 var hsl = {
                     h: ((result[1] % 360) + 360) % 360,
@@ -55,11 +57,11 @@
             },
             to: function(color) {
                 var hsl = AsColor.RGBToHSL(color);
-                return 'hsl(' + parseInt(hsl.h, 10) + ',' + Math.round(hsl.s * 100) + '%,' + Math.round(hsl.l * 100) + '%)';
+                return 'hsl(' + parseInt(hsl.h, 10) + ', ' + Math.round(hsl.s * 100) + '%, ' + Math.round(hsl.l * 100) + '%)';
             }
         },
         HSLA: {
-            match: /hsla\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d?(?:\.\d+)?)\s*\)/,
+            match: /hsla\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d?(?:\.\d+)?)\s*\)/i,
             parse: function(result) {
                 var hsla = {
                     h: ((result[1] % 360) + 360) % 360,
@@ -72,11 +74,11 @@
             },
             to: function(color) {
                 var hsl = AsColor.RGBToHSL(color);
-                return 'hsla(' + parseInt(hsl.h, 10) + ',' + Math.round(hsl.s * 100) + '%,' + Math.round(hsl.l * 100) + '%,' + color.a + ')';
+                return 'hsla(' + parseInt(hsl.h, 10) + ', ' + Math.round(hsl.s * 100) + '%, ' + Math.round(hsl.l * 100) + '%, ' + color.a + ')';
             }
         },
         HEX: {
-            match: /#([a-f0-9]{6}|[a-f0-9]{3})/,
+            match: /#([a-f0-9]{6}|[a-f0-9]{3})/i,
             parse: function(result) {
                 var hex = result[1];
                 if (hex.length === 3) {
@@ -101,7 +103,7 @@
             }
         },
         TRANSPARENT: {
-            match: /transparent/,
+            match: /transparent/i,
             parse: function() {
                 return {
                     r: 0,
@@ -146,6 +148,28 @@
                 }
             }
             this.from(string);
+        },
+        val: function(value) {
+            if (typeof value === 'undefined') {
+                return this.toString();
+            } else {
+                this.from(value);
+                return this;
+            }
+        },
+        alpha: function(value) {
+            if (typeof value === 'undefined' || isNaN(value)) {
+                return this.value.a;
+            } else {
+                value = parseFloat(value);
+
+                if (value > 1) {
+                    value = 1;
+                } else if (value < 0) {
+                    value = 0;
+                }
+                this.value.a = value;
+            }
         },
         from: function(string) {
             if (typeof string === 'string') {
@@ -194,51 +218,52 @@
             return this.value;
         },
         set: function(color) {
-            var from_rgb = 0,
-                from_hsv = 0;
+            var fromRgb = 0,
+                fromHsv = 0,
+                hsv,
+                rgb;
 
             for (var i in color) {
-                if ("hsv".indexOf(i) !== -1) {
-                    from_hsv++;
+                if ('hsv'.indexOf(i) !== -1) {
+                    fromHsv++;
                     this.value[i] = color[i];
-                } else if ("rgb".indexOf(i) !== -1) {
-                    from_rgb++;
+                } else if ('rgb'.indexOf(i) !== -1) {
+                    fromRgb++;
                     this.value[i] = color[i];
                 } else if (i === 'a') {
                     this.value.a = color.a;
                 }
             }
-            if (from_rgb > from_hsv) {
-                var hsv = AsColor.RGBtoHSV(this.value);
+            if (fromRgb > fromHsv) {
+                hsv = AsColor.RGBtoHSV(this.value);
                 if (this.value.r === 0 && this.value.g === 0 && this.value.b === 0) {
-                    this.value.h = color.h;
+                    // this.value.h = color.h;
                 } else {
                     this.value.h = hsv.h;
                 }
 
                 this.value.s = hsv.s;
                 this.value.v = hsv.v;
-            } else if (from_hsv > from_rgb) {
-                var rgb = AsColor.HSVtoRGB(this.value);
+            } else if (fromHsv > fromRgb) {
+                rgb = AsColor.HSVtoRGB(this.value);
                 this.value.r = rgb.r;
                 this.value.g = rgb.g;
                 this.value.b = rgb.b;
             }
         }
     };
-
     AsColor.HSLToRGB = function(hsl) {
         var h = hsl.h / 360,
             s = hsl.s,
             l = hsl.l,
-            m1, m2;
+            m1, m2, rgb;
         if (l <= 0.5) {
             m2 = l * (s + 1);
         } else {
             m2 = l + s - (l * s);
         }
         m1 = l * 2 - m2;
-        var rgb = {
+        rgb = {
             r: AsColor.hueToRGB(m1, m2, h + (1 / 3)),
             g: AsColor.hueToRGB(m1, m2, h),
             b: AsColor.hueToRGB(m1, m2, h - (1 / 3))
@@ -341,7 +366,7 @@
         }
 
         return {
-            h: h * 360,
+            h: Math.round(h * 360),
             s: s,
             v: v
         };

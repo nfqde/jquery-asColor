@@ -1,6 +1,6 @@
 # asColor
 
-the plugin used to change asColor value
+A jquery plugin used to parse css color string and convent it to other color formats. It support rgb, rgba, hex, hsl, hsla.
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
@@ -15,17 +15,17 @@ In your web page:
 <script src="dist/jquery-asColor.min.js"></script>
 <script>
 jQuery(function($) {
-  var value = $.asColor($('input')[0].value);
+  var color = $.asColor('rgba(255, 255, 255, 1)'),
+  string = color.toString(), // rgba(255, 255, 255, 1)
+  hex = color.toHEX(), // #ffffff
+  rgb = color.toRGB(), // rgb(255, 255, 255)
+  hsl = color.toHSL(), // hsl(0, 0%, 100%)
+  hsla = color.toHSLA(); // hsla(0, 0%, 100%, 1)
+
+  color.val('#000')
+  color.format('hsla');
+  color.alpha(0.5);
+  var value = color.val(); // hsla(0, 0%, 0%, 0.5)
 });
-</script>
-
 ```
-
-## Documentation
-_(Coming soon)_
-
-## Examples
-_(Coming soon)_
-
-## Release History
-_(Nothing yet)_
+</script>

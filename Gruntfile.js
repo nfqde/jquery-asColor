@@ -21,6 +21,7 @@ module.exports = function(grunt) {
                 dest: 'dist/<%= pkg.name %>.js'
             },
         },
+
         uglify: {
             options: {
                 banner: '<%= banner %>'
@@ -32,7 +33,7 @@ module.exports = function(grunt) {
         },
 
         jshint: {
-            gruntfile: {
+            grunt: {
                 options: {
                     jshintrc: '.jshintrc'
                 },
@@ -51,6 +52,18 @@ module.exports = function(grunt) {
                 src: ['test/**/*.js']
             },
         },
+
+        jscs: {
+            options: {
+                config: 'src/.jscsrc'
+            },
+            src: {
+                files: {
+                    src: ['src']
+                }
+            },
+        },
+
         watch: {
             gruntfile: {
                 files: '<%= jshint.gruntfile.src %>',
@@ -64,6 +77,10 @@ module.exports = function(grunt) {
                 files: '<%= jshint.test.src %>',
                 tasks: ['jshint:test', 'qunit']
             },
+        },
+
+        qunit: {
+            all: ['test/**/*.html']
         },
 
         jsbeautifier: {
@@ -85,15 +102,7 @@ module.exports = function(grunt) {
                 "unescape_strings": false
             }
         },
-        recess: {
-            core: {
-                src: ["less/**/*.less"],
-                dest: 'css/asColor.css',
-                options: {
-                    compile: true
-                }
-            },
-        },
+
         replace: {
             bower: {
                 src: ['bower.json'],
@@ -119,14 +128,13 @@ module.exports = function(grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
+    grunt.registerTask('default', ['clean', 'dist', 'concat', 'uglify']);
     grunt.registerTask('dist', ['concat', 'uglify']);
 
-    grunt.registerTask('js', ['jsbeautifier', 'jshint']);
+    grunt.registerTask('js', ['jsbeautifier', 'jshint', 'jscs']);
 
     grunt.registerTask('version', [
         'replace:bower',
         'replace:jquery'
     ]);
-
 };
