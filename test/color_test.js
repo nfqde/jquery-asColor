@@ -38,7 +38,7 @@
 
         equal(color.val('RGB(60,60,60)').toString(),'#3c3c3c','RGB(60,60,60)');
 
-        equal(color.val('RGBA(60,60,60)').toString(),'#3c3c3c','RGBA(60,60,60)');
+        equal(color.val('RGBA(60,60,60,1)').toString(),'#3c3c3c','RGBA(60,60,60)');
 
         equal(color.val('HSL(0, 0%, 24%)').toString(),'#3d3d3d',"HSL(0, 0%, 24%)");  /* ! */
 
@@ -64,6 +64,99 @@
         equal(color.toString(), '#000000','toString()');
     });
 
+    test('option nameDegradation', function() {
+        var color = new $.asColor('#126782', 'name');
+
+        equal(color.format(), 'NAME', 'test format');
+        equal(color.toString(), '#126782', 'test toString');
+
+        color = new $.asColor('#126782', 'name', {
+            nameDegradation: 'rgb'
+        });
+
+        equal(color.format(), 'NAME', 'check format again');
+        equal(color.toString(), 'rgb(18, 103, 130)', 'test nameDegradation');
+    });
+
+    test('option hexUseName', function(){
+        var color = new $.asColor('#8fbc8f', {
+            hexUseName: false
+        });
+        equal(color.format(), 'HEX', 'check format first');
+        equal(color.toString(), '#8fbc8f', 'check format first');
+
+        color = new $.asColor('#8fbc8f', {
+            hexUseName: true
+        });
+        equal(color.format(), 'HEX', 'check format first');
+        equal(color.toString(), 'darkseagreen', 'check format first');
+    });
+
+    test('option shortenHex', function(){
+        var color = new $.asColor('#fff');
+        equal(color.toString(), '#ffffff', 'test toString');
+
+        color = new $.asColor('#fff', {
+            shortenHex: true
+        });
+
+        equal(color.format(), 'HEX', 'test format');
+        equal(color.toString(), '#fff', 'test shortenHex');
+    });
+
+    test('option invalid value', function(){
+        var color = new $.asColor('hello world', {
+            invalidValue: ''
+        });
+        equal(color.toString(), '', 'test invalidValue');
+
+        color = new $.asColor('hello world', 'HEX', {
+            invalidValue: {
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 1
+            }
+        });
+        equal(color.toString(), '#000000', 'test object invalidValue');
+    });
+
+    test('option reduceAlpha', function(){
+        var color = new $.asColor('rgba(255,255,255,1)', {
+            reduceAlpha: false
+        });
+        equal(color.toString(), 'rgba(255, 255, 255, 1)', 'test reduceAlpha false');
+
+        color = new $.asColor('rgba(255,255,255,1)', {
+            reduceAlpha: true
+        });
+        equal(color.toString(), 'rgb(255, 255, 255)', 'test reduceAlpha true');
+
+        color = new $.asColor('hsla(0,0%,50%,1)', {
+            reduceAlpha: false
+        });
+        equal(color.toString(), 'hsla(0, 0%, 50%, 1)', 'test reduceAlpha false');
+
+        color = new $.asColor('hsla(0,0%,50%,1)', {
+            reduceAlpha: true
+        });
+        equal(color.toString(), 'hsl(0, 0%, 50%)', 'test reduceAlpha true');
+    });
+
+    test('option zeroAlphaAsTransparent', function(){
+        var color = new $.asColor('rgba(255,255,255,0)', {
+            zeroAlphaAsTransparent: false
+        });
+
+        equal(color.toString(), 'rgba(255, 255, 255, 0)', 'test zeroAlphaAsTransparent false');
+
+        color = new $.asColor('rgba(255,255,255,0)', {
+            zeroAlphaAsTransparent: true
+        });
+
+        equal(color.toString(), 'transparent', 'test zeroAlphaAsTransparent true');
+    });
+
     test('method val', function() {
         var color = new $.asColor('#000000', 'HEX');
         
@@ -78,6 +171,31 @@
         equal(color.val('hsla(0, 14%, 23%, 1)').toString(),'#433232','val("hsla(0, 14%, 23%, 1)")'); /* ! */
 
         equal(color.val('transparent').toString(),'transparent','val("transparent")');
+    });
+
+    test('method isValid', function() {
+        var color = new $.asColor();
+        color.val('#fff');
+
+        equal(color.isValid(), true, 'validate #fff is true');
+
+        color.val('fff');
+
+        equal(color.isValid(), false, 'validate fff is false');
+
+        color.val('its not valid');
+
+        equal(color.isValid(), false, 'validate "its not valid" is false');
+
+    });
+
+    test('method name', function() {
+        var color = new $.asColor('red');
+
+        equal(color.isValid(), true, 'test red is valid');
+        equal(color.toHEX(), '#ff0000', 'test red hex');
+        equal(color.format(), 'NAME', 'test red format');
+        equal(color.toString(), 'red', 'test red format');
     });
 
     test('method format', function(){
@@ -180,6 +298,7 @@
         },'get hsla(0, 0%, 100%, 0.5)');
 
         color.val('#fff600');
+        color.alpha(1);
         deepEqual(color.get(), {
             r: 255,
             g: 246,
@@ -191,7 +310,7 @@
         },'get #fff600');
     });
 
-    test('alpha', function(){
+    test('method alpha', function(){
         var color = new $.asColor('#8c9cdf', 'rgba');
 
         equal(color.alpha(), '1', "alpha()");
