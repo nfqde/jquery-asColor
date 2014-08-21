@@ -1,4 +1,4 @@
-/*! asColor - v0.2.0 - 2014-08-20
+/*! asColor - v0.2.0 - 2014-08-22
 * https://github.com/amazingSurge/asColor
 * Copyright (c) 2014 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -262,19 +262,28 @@
             }
         },
         toRGBA: function() {
-            return CssColorStrings.RGBA.to(this.value);
+            return CssColorStrings.RGBA.to(this.value, this);
         },
         toRGB: function() {
-            return CssColorStrings.RGB.to(this.value);
+            return CssColorStrings.RGB.to(this.value, this);
         },
         toHSLA: function() {
-            return CssColorStrings.HSLA.to(this.value);
+            return CssColorStrings.HSLA.to(this.value, this);
         },
         toHSL: function() {
-            return CssColorStrings.HSL.to(this.value);
+            return CssColorStrings.HSL.to(this.value, this);
         },
         toHEX: function() {
-            return CssColorStrings.HEX.to(this.value);
+            return CssColorStrings.HEX.to(this.value, this);
+        },
+        toNAME: function() {
+            return CssColorStrings.NAME.to(this.value, this);
+        },
+        to: function(format) {
+            if (typeof format === 'string' && (format = format.toUpperCase()) && typeof CssColorStrings[format] !== 'undefined') {
+                return CssColorStrings[format].to(this.value, this);
+            }
+            return this.toString();
         },
         toString: function() {
             var value = this.value;
