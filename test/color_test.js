@@ -33,6 +33,48 @@
         }
     });
 
+    test('method matchString', function(){
+        equal($.asColor.matchString(''),false,' ');
+        equal($.asColor.matchString('#'),false,'#');
+        equal($.asColor.matchString('#3'),false,'#3');
+        equal($.asColor.matchString('#33'),false,'#33');
+        equal($.asColor.matchString('#333'),true,'#333');
+        equal($.asColor.matchString('#3333'),false,'#3333');
+        equal($.asColor.matchString('#33333'),false,'#33333');
+        equal($.asColor.matchString('#333333'),true,'#333333');
+        equal($.asColor.matchString('#333333 '),true,'#333333 ');
+        equal($.asColor.matchString('#3333333'),false,'#3333333');
+        
+        equal($.asColor.matchString('R'),false,'R');
+        equal($.asColor.matchString('RG'),false,'RG');
+        equal($.asColor.matchString('RGB'),false,'RGB');
+        equal($.asColor.matchString('RGB('),false,'RGB(');
+        equal($.asColor.matchString('RGB(6'),false,'RGB(6');
+        equal($.asColor.matchString('RGB(60,'),false,'RGB(60,');
+        equal($.asColor.matchString('RGB(60,6'),false,'RGB(60,6');
+        equal($.asColor.matchString('RGB(60,60,'),false,'RGB(60,60,');
+        equal($.asColor.matchString('RGB(60,60,6'),false,'RGB(60,60,6');
+        equal($.asColor.matchString('RGB(60,60,60'),false,'RGB(60,60,60');
+        equal($.asColor.matchString('RGB(60,60,60)'),true,'RGB(60,60,60)');
+        equal($.asColor.matchString('RGB(60,60,60) '),true,'RGB(60,60,60) ');
+        equal($.asColor.matchString('RGB(60,60,60),'),false,'RGB(60,60,60),');
+
+        equal($.asColor.matchString('trans'),false,'trans');
+        equal($.asColor.matchString('transparent'),true,'transparent');
+
+        equal($.asColor.matchString('w'),false,'w');
+        equal($.asColor.matchString('wh'),false,'wh');
+        equal($.asColor.matchString('whi'),false,'whi');
+        equal($.asColor.matchString('whit'),false,'whit');
+        equal($.asColor.matchString('white'),true,'white');
+        equal($.asColor.matchString('whitea'),false,'whitea');
+
+        equal($.asColor.matchString('r'),false,'');
+        equal($.asColor.matchString('re'),false,'re');
+        equal($.asColor.matchString('red'),true,'red');
+        equal($.asColor.matchString('reda'),false,'reda');
+    });
+
     test('upper strings', function(){
         var color = new $.asColor('#000000', 'HEX');
 

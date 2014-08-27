@@ -57,12 +57,12 @@
         var CSS_NUMBER = '[-\\+]?\\d*\\.\\d+%?';
         var CSS_UNIT = '(?:' + CSS_NUMBER + ')|(?:' + CSS_INTEGER + ')';
 
-        var PERMISSIVE_MATCH3 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?';
-        var PERMISSIVE_MATCH4 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?';
+        var PERMISSIVE_MATCH3 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)';
+        var PERMISSIVE_MATCH4 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)';
 
         return {
             RGB: {
-                match: new RegExp('rgb' + PERMISSIVE_MATCH3, 'i'),
+                match: new RegExp('^rgb' + PERMISSIVE_MATCH3 +'$', 'i'),
                 parse: function(result) {
                     return {
                         r: isPercentage(result[1]) ? conventPercentageToRgb(result[1]) : parseInt(result[1], 10),
@@ -75,7 +75,7 @@
                 }
             },
             RGBA: {
-                match: new RegExp('rgba' + PERMISSIVE_MATCH4, 'i'),
+                match: new RegExp('^rgba' + PERMISSIVE_MATCH4 +'$', 'i'),
                 parse: function(result) {
                     return {
                         r: isPercentage(result[1]) ? conventPercentageToRgb(result[1]) : parseInt(result[1], 10),
@@ -89,7 +89,7 @@
                 }
             },
             HSL: {
-                match: new RegExp('hsl' + PERMISSIVE_MATCH3, 'i'),
+                match: new RegExp('^hsl' + PERMISSIVE_MATCH3 +'$', 'i'),
                 parse: function(result) {
                     var hsl = {
                         h: ((result[1] % 360) + 360) % 360,
@@ -105,7 +105,7 @@
                 }
             },
             HSLA: {
-                match: new RegExp('hsla' + PERMISSIVE_MATCH4, 'i'),
+                match: new RegExp('^hsla' + PERMISSIVE_MATCH4 +'$', 'i'),
                 parse: function(result) {
                     var hsla = {
                         h: ((result[1] % 360) + 360) % 360,
@@ -122,7 +122,7 @@
                 }
             },
             HEX: {
-                match: /^#([a-f0-9]{6}|[a-f0-9]{3})/i,
+                match: /^#([a-f0-9]{6}|[a-f0-9]{3})$/i,
                 parse: function(result) {
                     var hex = result[1];
 
@@ -151,7 +151,7 @@
                 }
             },
             TRANSPARENT: {
-                match: /transparent/i,
+                match: /^transparent$/i,
                 parse: function() {
                     return {
                         r: 0,
@@ -181,7 +181,7 @@
             options = format;
             format = undefined;
         }
-        this.options = $.extend(true, {}, AsColor.defaults, options);
+        this.options = $.extend({}, AsColor.defaults, options);
         this.value = {
             r: 0,
             g: 0,
@@ -539,6 +539,24 @@
             }
             return CssColorStrings[degradation.toUpperCase()].to(rgb);
         }
+    };
+
+    AsColor.matchString = function(string){
+        if (typeof string === 'string') {
+            string = $.trim(string);
+            var matched = null,
+                rgb;
+            for (var i in CssColorStrings) {
+                if ((matched = CssColorStrings[i].match.exec(string)) != null) {
+                    rgb = CssColorStrings[i].parse(matched);
+
+                    if (rgb) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     };
     AsColor.defaults = {
         shortenHex: false,
