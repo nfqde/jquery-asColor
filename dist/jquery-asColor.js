@@ -1,4 +1,4 @@
-/*! asColor - v0.2.0 - 2014-08-20
+/*! asColor - v0.2.0 - 2014-08-26
 * https://github.com/amazingSurge/asColor
 * Copyright (c) 2014 amazingSurge; Licensed GPL */
 (function(window, document, $, undefined) {
@@ -53,12 +53,12 @@
         var CSS_NUMBER = '[-\\+]?\\d*\\.\\d+%?';
         var CSS_UNIT = '(?:' + CSS_NUMBER + ')|(?:' + CSS_INTEGER + ')';
 
-        var PERMISSIVE_MATCH3 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?';
-        var PERMISSIVE_MATCH4 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?';
+        var PERMISSIVE_MATCH3 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)';
+        var PERMISSIVE_MATCH4 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)';
 
         return {
             RGB: {
-                match: new RegExp('rgb' + PERMISSIVE_MATCH3, 'i'),
+                match: new RegExp('^rgb' + PERMISSIVE_MATCH3 +'$', 'i'),
                 parse: function(result) {
                     return {
                         r: isPercentage(result[1]) ? conventPercentageToRgb(result[1]) : parseInt(result[1], 10),
@@ -71,7 +71,7 @@
                 }
             },
             RGBA: {
-                match: new RegExp('rgba' + PERMISSIVE_MATCH4, 'i'),
+                match: new RegExp('^rgba' + PERMISSIVE_MATCH4 +'$', 'i'),
                 parse: function(result) {
                     return {
                         r: isPercentage(result[1]) ? conventPercentageToRgb(result[1]) : parseInt(result[1], 10),
@@ -85,7 +85,7 @@
                 }
             },
             HSL: {
-                match: new RegExp('hsl' + PERMISSIVE_MATCH3, 'i'),
+                match: new RegExp('^hsl' + PERMISSIVE_MATCH3 +'$', 'i'),
                 parse: function(result) {
                     var hsl = {
                         h: ((result[1] % 360) + 360) % 360,
@@ -101,7 +101,7 @@
                 }
             },
             HSLA: {
-                match: new RegExp('hsla' + PERMISSIVE_MATCH4, 'i'),
+                match: new RegExp('^hsla' + PERMISSIVE_MATCH4 +'$', 'i'),
                 parse: function(result) {
                     var hsla = {
                         h: ((result[1] % 360) + 360) % 360,
@@ -118,7 +118,7 @@
                 }
             },
             HEX: {
-                match: /^#([a-f0-9]{6}|[a-f0-9]{3})/i,
+                match: /^#([a-f0-9]{6}|[a-f0-9]{3})$/i,
                 parse: function(result) {
                     var hex = result[1];
 
@@ -147,7 +147,7 @@
                 }
             },
             TRANSPARENT: {
-                match: /transparent/i,
+                match: /^transparent$/i,
                 parse: function() {
                     return {
                         r: 0,
@@ -172,12 +172,16 @@
         };
     })();
 
-    var AsColor = $.asColor = function(string, format, options) {
-        if (typeof format === 'object') {
-            options = format;
-            format = undefined;
+    var AsColor = $.asColor = function(string, options) {
+        if (typeof string === 'object' && typeof options === 'undefined') {
+            options = string;
         }
-        this.options = $.extend(true, {}, AsColor.defaults, options);
+        if(typeof options === 'string'){
+            options = {
+                format: options
+            };
+        }
+        this.options = $.extend({}, AsColor.defaults, options);
         this.value = {
             r: 0,
             g: 0,
@@ -190,13 +194,13 @@
         this._format = 'HEX';
         this._valid = true;
 
-        this.init(string, format);
+        this.init(string, this.options.format);
     };
 
     AsColor.prototype = {
         constructor: AsColor,
         init: function(string, format) {
-            if (typeof format !== 'undefined') {
+            if (format !== false) {
                 this.format(format);
                 this.fromString(string);
             } else {
@@ -227,6 +231,9 @@
                 }
                 this.value.a = value;
             }
+        },
+        matchString: function(string){
+            return AsColor.matchString(string);
         },
         fromString: function(string, updateFormat) {
             if (typeof string === 'string') {
@@ -536,7 +543,26 @@
             return CssColorStrings[degradation.toUpperCase()].to(rgb);
         }
     };
+
+    AsColor.matchString = function(string){
+        if (typeof string === 'string') {
+            string = $.trim(string);
+            var matched = null,
+                rgb;
+            for (var i in CssColorStrings) {
+                if ((matched = CssColorStrings[i].match.exec(string)) != null) {
+                    rgb = CssColorStrings[i].parse(matched);
+
+                    if (rgb) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    };
     AsColor.defaults = {
+        format: false,
         shortenHex: false,
         hexUseName: false,
         reduceAlpha: false,

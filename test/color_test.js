@@ -73,6 +73,10 @@
         equal($.asColor.matchString('re'),false,'re');
         equal($.asColor.matchString('red'),true,'red');
         equal($.asColor.matchString('reda'),false,'reda');
+
+        var color = new $.asColor('', 'HEX');
+
+        equal(color.matchString('red'),true,'red');
     });
 
     test('upper strings', function(){
@@ -107,12 +111,15 @@
     });
 
     test('option nameDegradation', function() {
-        var color = new $.asColor('#126782', 'name');
+        var color = new $.asColor('#126782', {
+            format: 'name'
+        });
 
         equal(color.format(), 'NAME', 'test format');
         equal(color.toString(), '#126782', 'test toString');
 
-        color = new $.asColor('#126782', 'name', {
+        color = new $.asColor('#126782', {
+            format: 'name',
             nameDegradation: 'rgb'
         });
 
@@ -152,7 +159,7 @@
         });
         equal(color.toString(), '', 'test invalidValue');
 
-        color = new $.asColor('hello world', 'HEX', {
+        color = new $.asColor('hello world', {
             invalidValue: {
                 r: 0,
                 g: 0,

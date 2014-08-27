@@ -176,10 +176,14 @@
         };
     })();
 
-    var AsColor = $.asColor = function(string, format, options) {
-        if (typeof format === 'object') {
-            options = format;
-            format = undefined;
+    var AsColor = $.asColor = function(string, options) {
+        if (typeof string === 'object' && typeof options === 'undefined') {
+            options = string;
+        }
+        if(typeof options === 'string'){
+            options = {
+                format: options
+            };
         }
         this.options = $.extend({}, AsColor.defaults, options);
         this.value = {
@@ -194,13 +198,13 @@
         this._format = 'HEX';
         this._valid = true;
 
-        this.init(string, format);
+        this.init(string, this.options.format);
     };
 
     AsColor.prototype = {
         constructor: AsColor,
         init: function(string, format) {
-            if (typeof format !== 'undefined') {
+            if (format !== false) {
                 this.format(format);
                 this.fromString(string);
             } else {
@@ -231,6 +235,9 @@
                 }
                 this.value.a = value;
             }
+        },
+        matchString: function(string){
+            return AsColor.matchString(string);
         },
         fromString: function(string, updateFormat) {
             if (typeof string === 'string') {
@@ -559,6 +566,7 @@
         return false;
     };
     AsColor.defaults = {
+        format: false,
         shortenHex: false,
         hexUseName: false,
         reduceAlpha: false,
