@@ -263,7 +263,9 @@
 
                         if (rgb) {
                             this.set(rgb);
-                            this._valid = true;
+                            if(i === 'TRANSPARENT'){
+                                i = 'HEX';
+                            }
                             this._matchFormat = i;
                             if (updateFormat === true) {
                                 this.format(i);
@@ -280,6 +282,8 @@
             if (typeof format === 'string' && (format = format.toUpperCase()) && typeof CssColorStrings[format] !== 'undefined') {
                 if (format !== 'TRANSPARENT') {
                     this._format = format;
+                } else {
+                    this._format = 'HEX';
                 }
             } else if(format === false) {
                 this._format = false;
@@ -361,6 +365,7 @@
             return this.value;
         },
         set: function(color) {
+            this._valid = true;
             var fromRgb = 0,
                 fromHsv = 0,
                 hsv,

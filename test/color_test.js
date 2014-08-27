@@ -491,7 +491,7 @@
 
     test('color transparent', function() {
         var color = new $.asColor('transparent');
-        equal(color.format(),'TRANSPARENT','transparent default format TRANSPARENT');
+        equal(color.format(),'HEX','transparent default format HEX');
         equal(color.toRGB(),'rgb(0, 0, 0)','change to RGB');
         equal(color.toRGBA(),'rgba(0, 0, 0, 0)','change to RGBA');
         equal(color.toHSL(),'hsl(0, 0%, 0%)','change to HSL');

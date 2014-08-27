@@ -259,7 +259,6 @@
 
                         if (rgb) {
                             this.set(rgb);
-                            this._valid = true;
                             this._matchFormat = i;
                             if (updateFormat === true) {
                                 this.format(i);
@@ -357,6 +356,7 @@
             return this.value;
         },
         set: function(color) {
+            this._valid = true;
             var fromRgb = 0,
                 fromHsv = 0,
                 hsv,
