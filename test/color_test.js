@@ -384,6 +384,27 @@
         equal(color.alpha(), '1', "alpha('abc')");
     });
 
+    test('method to', function(){
+        var color = new $.asColor('rgba(255, 128, 36, 0.5)');
+
+        equal(color.toRGBA(), 'rgba(255, 128, 36, 0.5)', "RGBA convert");
+        equal(color.to('rgba'), 'rgba(255, 128, 36, 0.5)', "RGBA convert");
+
+        equal(color.toRGB(), 'rgb(255, 128, 36)', "RGB convert");
+        equal(color.to('rgb'), 'rgb(255, 128, 36)', "RGB convert");
+
+        equal(color.toHSLA(), 'hsla(25, 100%, 57%, 0.5)', "HSLA convert");
+        equal(color.to('hsla'), 'hsla(25, 100%, 57%, 0.5)', "HSLA convert");
+
+        equal(color.toHEX(), '#ff8024', "HEX convert");
+        equal(color.to('hex'), '#ff8024', "HEX convert");
+
+        equal(color.to('name'), '#ff8024', "Name convert");
+
+        color.val('#fff');
+        equal(color.to('name'), 'white', "Name convert");
+    });
+
     test('color rgb',function() {
         var color = new $.asColor(this.colorForm.rgb);
         equal(color.toRGBA(), 'rgba(0, 0, 0, 1)', "RGBA convert");
