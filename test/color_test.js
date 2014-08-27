@@ -79,6 +79,81 @@
         equal(color.matchString('red'),true,'red');
     });
 
+    test('format toString', function(){
+        var color = new $.asColor({
+            format: false,
+            alphaConvert: false
+        });
+
+        color.val('#123456');
+        equal(color.toString(), '#123456', '#123456');
+        color.val('rgb(255,255,255)');
+        equal(color.toString(), 'rgb(255, 255, 255)', 'rgb(255,255,255)');
+        color.val('rgba(255,255,255,0.8)');
+        equal(color.toString(), 'rgba(255, 255, 255, 0.8)', 'rgba(255,255,255,0.8)');
+        color.val('hsl(0,0%,50%)');
+        equal(color.toString(), 'hsl(0, 0%, 50%)', 'hsl(0,0%,50%)');
+        color.val('hsla(0,0%,50%,0.8)');
+        equal(color.toString(), 'hsla(0, 0%, 50%, 0.8)', 'hsl(0,0%,50%,0.8)');
+        color.val('white');
+        equal(color.toString(), 'white', 'white');
+
+        color.format('rgba');
+        color.val('#123456');
+        equal(color.toString(), 'rgba(18, 52, 86, 1)', '#123456');
+
+        color.val('white');
+        equal(color.toString(), 'rgba(255, 255, 255, 1)', 'white');
+
+        color.format('rgb');
+        color.val('rgba(255,255,255,0.8)');
+        equal(color.toString(), 'rgb(255, 255, 255)', 'rgba(255,255,255,0.8)');
+    });
+
+    test('option alphaConvert', function(){
+        var color = new $.asColor({
+            format: false,
+            alphaConvert: false
+        });
+
+        color.format('rgb');
+        color.val('rgba(255,255,255,0.8)');
+        equal(color.toString(), 'rgb(255, 255, 255)', 'rgba(255,255,255,0.8)');
+
+        color = new $.asColor({
+            format: false,
+            alphaConvert: 'RGBA'
+        });
+
+        color.format('rgb');
+        color.val('rgba(255,255,255,0.8)');
+        equal(color.toString(), 'rgba(255, 255, 255, 0.8)', 'rgba(255,255,255,0.8)');
+
+        color = new $.asColor({
+            format: false,
+            alphaConvert: {
+                'RGB': 'RGBA',
+                'HSL': 'HSLA',
+                'HEX': 'RGBA',
+                'NAME': 'RGBA',
+            }
+        });
+
+        color.format('rgb');
+        color.val('rgba(255,255,255,0.8)');
+        equal(color.toString(), 'rgba(255, 255, 255, 0.8)', 'rgba(255,255,255,0.8)');
+
+        color.val('white');
+        equal(color.toString(), 'rgb(255, 255, 255)', 'white');
+        color.alpha(0.8);
+        equal(color.toString(), 'rgba(255, 255, 255, 0.8)', 'white with alpha 0.8');
+
+        color.val('#fff');
+        equal(color.toString(), 'rgb(255, 255, 255)', '#fff');
+        color.alpha(0.8);
+        equal(color.toString(), 'rgba(255, 255, 255, 0.8)', '#fff with alpha 0.8');
+    });
+
     test('upper strings', function(){
         var color = new $.asColor('#000000', 'HEX');
 
@@ -416,7 +491,7 @@
 
     test('color transparent', function() {
         var color = new $.asColor('transparent');
-        equal(color.format(),'HEX','transparent default format HEX');
+        equal(color.format(),'TRANSPARENT','transparent default format TRANSPARENT');
         equal(color.toRGB(),'rgb(0, 0, 0)','change to RGB');
         equal(color.toRGBA(),'rgba(0, 0, 0, 0)','change to RGBA');
         equal(color.toHSL(),'hsl(0, 0%, 0%)','change to HSL');
