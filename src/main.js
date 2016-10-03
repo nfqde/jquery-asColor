@@ -18,3 +18,5 @@ $.extend($.asColor, {
     return jQueryAsColor;
   }
 }, Converter, info);
+
+export default $.asColor;
