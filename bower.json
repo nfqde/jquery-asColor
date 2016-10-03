@@ -1,15 +1,30 @@
 {
-    "name": "jquery-asColor",
-    "version": "0.2.1",
-    "main": "dist/jquery-asColor.js",
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "libs",
-        "test"
-    ],
-    "dependencies": {
-        "jquery": ">=1.8.3"
-    }
+  "name": "jquery-asColor",
+  "version": "0.3.0",
+  "description": "A jquery plugin used to parse css color string and convent it to other color formats. It support rgb, rgba, hex, hsl, hsla.",
+  "main": "dist/jquery-asColor.js",
+  "copyright": "amazingSurge",
+  "license": "LGPL-3.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "demo",
+    "gulp",
+    "CONTRIBUTING.md",
+    "manifest.json",
+    "karma.conf.js",
+    "config.js",
+    "package.json",
+    "gulpfile.babel.js",
+    "tests"
+  ],
+  "homepage": "https://github.com/amazingSurge/jquery-asColor",
+  "authors": [
+    "amazingSurge <amazingSurge@gmail.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ]
 }
