@@ -26,5 +26,8 @@
   ],
   "moduleType": [
     "globals"
-  ]
+  ],
+  "dependencies": {
+    "jquery": ">=2.2.0"
+  }
 }
