@@ -1,5 +1,5 @@
 /**
-* jQuery asColor v0.3.0
+* jQuery asColor v0.3.1
 * https://github.com/amazingSurge/asColor
 *
 * Copyright (c) amazingSurge
@@ -40,32 +40,6 @@
       function(obj) {
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
       };
-
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-
-      subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }
-      });
-
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
 
     function _classCallCheck(instance, Constructor) {
       if (!(instance instanceof Constructor)) {
@@ -112,6 +86,64 @@
       invalidValue: '',
       zeroAlphaAsTransparent: true
     };
+
+    function expandHex(hex) {
+      if (hex.indexOf('#') === 0) {
+        hex = hex.substr(1);
+      }
+
+      if (!hex) {
+
+        return null;
+      }
+
+      if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      }
+
+      return hex.length === 6 ? '#' + hex : null;
+    }
+
+    function shrinkHex(hex) {
+      if (hex.indexOf('#') === 0) {
+        hex = hex.substr(1);
+      }
+
+      if (hex.length === 6 && hex[0] === hex[1] && hex[2] === hex[3] && hex[4] === hex[5]) {
+        hex = hex[0] + hex[2] + hex[4];
+      }
+
+      return '#' + hex;
+    }
+
+    function parseIntFromHex(val) {
+      return parseInt(val, 16);
+    }
+
+    function isPercentage(n) {
+      return typeof n === 'string' && n.indexOf('%') === n.length - 1;
+    }
+
+    function conventPercentageToRgb(n) {
+      return parseInt(Math.round(n.slice(0, -1) * 2.55), 10);
+    }
+
+    function convertPercentageToFloat(n) {
+      return parseFloat(n.slice(0, -1) / 100, 10);
+    }
+
+    function flip(o) {
+      var flipped = {};
+
+      for (var i in o) {
+
+        if (o.hasOwnProperty(i)) {
+          flipped[o[i]] = i;
+        }
+      }
+
+      return flipped;
+    }
 
     var NAMES = {
       aliceblue: 'f0f8ff',
@@ -264,360 +296,280 @@
       yellowgreen: '9acd32'
     };
 
-    function expandHex(hex) {
-      if (hex.indexOf('#') === 0) {
-        hex = hex.substr(1);
-      }
-
-      if (!hex) {
-
-        return null;
-      }
-
-      if (hex.length === 3) {
-        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-      }
-
-      return hex.length === 6 ? '#' + hex : null;
-    }
-
-    function shrinkHex(hex) {
-      if (hex.indexOf('#') === 0) {
-        hex = hex.substr(1);
-      }
-
-      if (hex.length === 6 && hex[0] === hex[1] && hex[2] === hex[3] && hex[4] === hex[5]) {
-        hex = hex[0] + hex[2] + hex[4];
-      }
-
-      return '#' + hex;
-    }
-
-    function parseIntFromHex(val) {
-      return parseInt(val, 16);
-    }
-
-    function isPercentage(n) {
-      return typeof n === 'string' && n.indexOf('%') === n.length - 1;
-    }
-
-    function conventPercentageToRgb(n) {
-      return parseInt(Math.round(n.slice(0, -1) * 2.55), 10);
-    }
-
-    function convertPercentageToFloat(n) {
-      return parseFloat(n.slice(0, -1) / 100, 10);
-    }
-
-    function flip(o) {
-      var flipped = {};
-
-      for (var i in o) {
-
-        if (o.hasOwnProperty(i)) {
-          flipped[o[i]] = i;
-        }
-      }
-
-      return flipped;
-    }
-
     /* eslint no-bitwise: "off" */
     var hexNames = flip(NAMES);
 
-    var Converter = function() {
-      function Converter() {
-        _classCallCheck(this, Converter);
+    var Converter = {
+      HSLtoRGB: function HSLtoRGB(hsl) {
+        var h = hsl.h / 360;
+        var s = hsl.s;
+        var l = hsl.l;
+        var m1 = void 0;
+        var m2 = void 0;
+        var rgb = void 0;
+
+        if (l <= 0.5) {
+          m2 = l * (s + 1);
+        } else {
+          m2 = l + s - l * s;
+        }
+        m1 = l * 2 - m2;
+        rgb = {
+          r: this.hueToRGB(m1, m2, h + 1 / 3),
+          g: this.hueToRGB(m1, m2, h),
+          b: this.hueToRGB(m1, m2, h - 1 / 3)
+        };
+
+        if (typeof hsl.a !== 'undefined') {
+          rgb.a = hsl.a;
+        }
+
+        if (hsl.l === 0) {
+          rgb.h = hsl.h;
+        }
+
+        if (hsl.l === 1) {
+          rgb.h = hsl.h;
+        }
+
+        return rgb;
+      },
+
+      hueToRGB: function hueToRGB(m1, m2, h) {
+        var v = void 0;
+
+        if (h < 0) {
+          h += 1;
+        } else if (h > 1) {
+          h -= 1;
+        }
+
+        if (h * 6 < 1) {
+          v = m1 + (m2 - m1) * h * 6;
+        } else if (h * 2 < 1) {
+          v = m2;
+        } else if (h * 3 < 2) {
+          v = m1 + (m2 - m1) * (2 / 3 - h) * 6;
+        } else {
+          v = m1;
+        }
+
+        return Math.round(v * 255);
+      },
+
+      RGBtoHSL: function RGBtoHSL(rgb) {
+        var r = rgb.r / 255;
+        var g = rgb.g / 255;
+        var b = rgb.b / 255;
+        var min = Math.min(r, g, b);
+        var max = Math.max(r, g, b);
+        var diff = max - min;
+        var add = max + min;
+        var l = add * 0.5;
+        var h = void 0;
+        var s = void 0;
+
+        if (min === max) {
+          h = 0;
+        } else if (r === max) {
+          h = 60 * (g - b) / diff + 360;
+        } else if (g === max) {
+          h = 60 * (b - r) / diff + 120;
+        } else {
+          h = 60 * (r - g) / diff + 240;
+        }
+
+        if (diff === 0) {
+          s = 0;
+        } else if (l <= 0.5) {
+          s = diff / add;
+        } else {
+          s = diff / (2 - add);
+        }
+
+        return {
+          h: Math.round(h) % 360,
+          s: s,
+          l: l
+        };
+      },
+
+      RGBtoHEX: function RGBtoHEX(rgb) {
+        var hex = [rgb.r.toString(16), rgb.g.toString(16), rgb.b.toString(16)];
+
+        _jquery2.default.each(hex,
+
+          function(nr, val) {
+            if (val.length === 1) {
+              hex[nr] = '0' + val;
+            }
+          }
+        );
+
+        return '#' + hex.join('');
+      },
+
+      HSLtoHEX: function HSLtoHEX(hsl) {
+        var rgb = this.HSLtoRGB(hsl);
+
+        return this.RGBtoHEX(rgb);
+      },
+
+      HSVtoHEX: function HSVtoHEX(hsv) {
+        var rgb = this.HSVtoRGB(hsv);
+
+        return this.RGBtoHEX(rgb);
+      },
+
+      RGBtoHSV: function RGBtoHSV(rgb) {
+        var r = rgb.r / 255;
+        var g = rgb.g / 255;
+        var b = rgb.b / 255;
+        var max = Math.max(r, g, b);
+        var min = Math.min(r, g, b);
+        var h = void 0;
+        var s = void 0;
+        var v = max;
+        var diff = max - min;
+        s = max === 0 ? 0 : diff / max;
+
+        if (max === min) {
+          h = 0;
+        } else {
+          switch (max) {
+            case r: {
+              h = (g - b) / diff + (g < b ? 6 : 0);
+              break;
+            }
+            case g: {
+              h = (b - r) / diff + 2;
+              break;
+            }
+            case b: {
+              h = (r - g) / diff + 4;
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+          h /= 6;
+        }
+
+        return {
+          h: Math.round(h * 360),
+          s: s,
+          v: v
+        };
+      },
+
+      HSVtoRGB: function HSVtoRGB(hsv) {
+        var r = void 0;
+        var g = void 0;
+        var b = void 0;
+        var h = hsv.h % 360 / 60;
+        var s = hsv.s;
+        var v = hsv.v;
+        var c = v * s;
+        var x = c * (1 - Math.abs(h % 2 - 1));
+
+        r = g = b = v - c;
+        h = ~~h;
+
+        r += [c, x, 0, 0, x, c][h];
+        g += [x, c, c, x, 0, 0][h];
+        b += [0, 0, x, c, c, x][h];
+
+        var rgb = {
+          r: Math.round(r * 255),
+          g: Math.round(g * 255),
+          b: Math.round(b * 255)
+        };
+
+        if (typeof hsv.a !== 'undefined') {
+          rgb.a = hsv.a;
+        }
+
+        if (hsv.v === 0) {
+          rgb.h = hsv.h;
+        }
+
+        if (hsv.v === 1 && hsv.s === 0) {
+          rgb.h = hsv.h;
+        }
+
+        return rgb;
+      },
+
+      HEXtoRGB: function HEXtoRGB(hex) {
+        if (hex.length === 4) {
+          hex = expandHex(hex);
+        }
+
+        return {
+          r: parseIntFromHex(hex.substr(1, 2)),
+          g: parseIntFromHex(hex.substr(3, 2)),
+          b: parseIntFromHex(hex.substr(5, 2))
+        };
+      },
+
+      isNAME: function isNAME(string) {
+        if (NAMES.hasOwnProperty(string)) {
+
+          return true;
+        }
+
+        return false;
+      },
+
+      NAMEtoHEX: function NAMEtoHEX(name) {
+        if (NAMES.hasOwnProperty(name)) {
+
+          return '#' + NAMES[name];
+        }
+
+        return null;
+      },
+
+      NAMEtoRGB: function NAMEtoRGB(name) {
+        var hex = this.NAMEtoHEX(name);
+
+        if (hex) {
+
+          return this.HEXtoRGB(hex);
+        }
+
+        return null;
+      },
+
+      hasNAME: function hasNAME(rgb) {
+        var hex = this.RGBtoHEX(rgb);
+
+        hex = shrinkHex(hex);
+
+        if (hex.indexOf('#') === 0) {
+          hex = hex.substr(1);
+        }
+
+        if (hexNames.hasOwnProperty(hex)) {
+
+          return hexNames[hex];
+        }
+
+        return false;
+      },
+
+      RGBtoNAME: function RGBtoNAME(rgb) {
+        var hasName = this.hasNAME(rgb);
+
+        if (hasName) {
+
+          return hasName;
+        }
+
+        return null;
       }
-
-      _createClass(Converter, null, [{
-        key: 'HSLtoRGB',
-        value: function HSLtoRGB(hsl) {
-          var h = hsl.h / 360;
-          var s = hsl.s;
-          var l = hsl.l;
-          var m1 = void 0;
-          var m2 = void 0;
-          var rgb = void 0;
-
-          if (l <= 0.5) {
-            m2 = l * (s + 1);
-          } else {
-            m2 = l + s - l * s;
-          }
-          m1 = l * 2 - m2;
-          rgb = {
-            r: Converter.hueToRGB(m1, m2, h + 1 / 3),
-            g: Converter.hueToRGB(m1, m2, h),
-            b: Converter.hueToRGB(m1, m2, h - 1 / 3)
-          };
-
-          if (typeof hsl.a !== 'undefined') {
-            rgb.a = hsl.a;
-          }
-
-          if (hsl.l === 0) {
-            rgb.h = hsl.h;
-          }
-
-          if (hsl.l === 1) {
-            rgb.h = hsl.h;
-          }
-
-          return rgb;
-        }
-      }, {
-        key: 'hueToRGB',
-        value: function hueToRGB(m1, m2, h) {
-          var v = void 0;
-
-          if (h < 0) {
-            h += 1;
-          } else if (h > 1) {
-            h -= 1;
-          }
-
-          if (h * 6 < 1) {
-            v = m1 + (m2 - m1) * h * 6;
-          } else if (h * 2 < 1) {
-            v = m2;
-          } else if (h * 3 < 2) {
-            v = m1 + (m2 - m1) * (2 / 3 - h) * 6;
-          } else {
-            v = m1;
-          }
-
-          return Math.round(v * 255);
-        }
-      }, {
-        key: 'RGBtoHSL',
-        value: function RGBtoHSL(rgb) {
-          var r = rgb.r / 255;
-          var g = rgb.g / 255;
-          var b = rgb.b / 255;
-          var min = Math.min(r, g, b);
-          var max = Math.max(r, g, b);
-          var diff = max - min;
-          var add = max + min;
-          var l = add * 0.5;
-          var h = void 0;
-          var s = void 0;
-
-          if (min === max) {
-            h = 0;
-          } else if (r === max) {
-            h = 60 * (g - b) / diff + 360;
-          } else if (g === max) {
-            h = 60 * (b - r) / diff + 120;
-          } else {
-            h = 60 * (r - g) / diff + 240;
-          }
-
-          if (diff === 0) {
-            s = 0;
-          } else if (l <= 0.5) {
-            s = diff / add;
-          } else {
-            s = diff / (2 - add);
-          }
-
-          return {
-            h: Math.round(h) % 360,
-            s: s,
-            l: l
-          };
-        }
-      }, {
-        key: 'RGBtoHEX',
-        value: function RGBtoHEX(rgb) {
-          var hex = [rgb.r.toString(16), rgb.g.toString(16), rgb.b.toString(16)];
-
-          _jquery2.default.each(hex,
-
-            function(nr, val) {
-              if (val.length === 1) {
-                hex[nr] = '0' + val;
-              }
-            }
-          );
-
-          return '#' + hex.join('');
-        }
-      }, {
-        key: 'HSLtoHEX',
-        value: function HSLtoHEX(hsl) {
-          var rgb = Converter.HSLtoRGB(hsl);
-
-          return Converter.RGBtoHEX(rgb);
-        }
-      }, {
-        key: 'HSVtoHEX',
-        value: function HSVtoHEX(hsv) {
-          var rgb = Converter.HSVtoRGB(hsv);
-
-          return Converter.RGBtoHEX(rgb);
-        }
-      }, {
-        key: 'RGBtoHSV',
-        value: function RGBtoHSV(rgb) {
-          var r = rgb.r / 255;
-          var g = rgb.g / 255;
-          var b = rgb.b / 255;
-          var max = Math.max(r, g, b);
-          var min = Math.min(r, g, b);
-          var h = void 0;
-          var s = void 0;
-          var v = max;
-          var diff = max - min;
-          s = max === 0 ? 0 : diff / max;
-
-          if (max === min) {
-            h = 0;
-          } else {
-            switch (max) {
-              case r: {
-                h = (g - b) / diff + (g < b ? 6 : 0);
-                break;
-              }
-              case g: {
-                h = (b - r) / diff + 2;
-                break;
-              }
-              case b: {
-                h = (r - g) / diff + 4;
-                break;
-              }
-              default: {
-                break;
-              }
-            }
-            h /= 6;
-          }
-
-          return {
-            h: Math.round(h * 360),
-            s: s,
-            v: v
-          };
-        }
-      }, {
-        key: 'HSVtoRGB',
-        value: function HSVtoRGB(hsv) {
-          var r = void 0;
-          var g = void 0;
-          var b = void 0;
-          var h = hsv.h % 360 / 60;
-          var s = hsv.s;
-          var v = hsv.v;
-          var c = v * s;
-          var x = c * (1 - Math.abs(h % 2 - 1));
-
-          r = g = b = v - c;
-          h = ~~h;
-
-          r += [c, x, 0, 0, x, c][h];
-          g += [x, c, c, x, 0, 0][h];
-          b += [0, 0, x, c, c, x][h];
-
-          var rgb = {
-            r: Math.round(r * 255),
-            g: Math.round(g * 255),
-            b: Math.round(b * 255)
-          };
-
-          if (typeof hsv.a !== 'undefined') {
-            rgb.a = hsv.a;
-          }
-
-          if (hsv.v === 0) {
-            rgb.h = hsv.h;
-          }
-
-          if (hsv.v === 1 && hsv.s === 0) {
-            rgb.h = hsv.h;
-          }
-
-          return rgb;
-        }
-      }, {
-        key: 'HEXtoRGB',
-        value: function HEXtoRGB(hex) {
-          if (hex.length === 4) {
-            hex = expandHex(hex);
-          }
-
-          return {
-            r: parseIntFromHex(hex.substr(1, 2)),
-            g: parseIntFromHex(hex.substr(3, 2)),
-            b: parseIntFromHex(hex.substr(5, 2))
-          };
-        }
-      }, {
-        key: 'isNAME',
-        value: function isNAME(string) {
-          if (NAMES.hasOwnProperty(string)) {
-
-            return true;
-          }
-
-          return false;
-        }
-      }, {
-        key: 'NAMEtoHEX',
-        value: function NAMEtoHEX(name) {
-          if (NAMES.hasOwnProperty(name)) {
-
-            return '#' + NAMES[name];
-          }
-
-          return null;
-        }
-      }, {
-        key: 'NAMEtoRGB',
-        value: function NAMEtoRGB(name) {
-          var hex = Converter.NAMEtoHEX(name);
-
-          if (hex) {
-
-            return Converter.HEXtoRGB(hex);
-          }
-
-          return null;
-        }
-      }, {
-        key: 'hasNAME',
-        value: function hasNAME(rgb) {
-          var hex = Converter.RGBtoHEX(rgb);
-
-          hex = shrinkHex(hex);
-
-          if (hex.indexOf('#') === 0) {
-            hex = hex.substr(1);
-          }
-
-          if (hexNames.hasOwnProperty(hex)) {
-
-            return hexNames[hex];
-          }
-
-          return false;
-        }
-      }, {
-        key: 'RGBtoNAME',
-        value: function RGBtoNAME(rgb) {
-          var hasName = Converter.hasNAME(rgb);
-
-          if (hasName) {
-
-            return hasName;
-          }
-
-          return null;
-        }
-      }]);
-
-      return Converter;
-    }();
+    };
 
     var CSS_INTEGER = '[-\\+]?\\d+%?';
     var CSS_NUMBER = '[-\\+]?\\d*\\.\\d+%?';
@@ -790,13 +742,9 @@
       ;
     }
 
-    var AsColor = function(_Converter) {
-      _inherits(AsColor, _Converter);
-
+    var AsColor = function() {
       function AsColor(string, options) {
         _classCallCheck(this, AsColor);
-
-        var _this = _possibleConstructorReturn(this, (AsColor.__proto__ || Object.getPrototypeOf(AsColor)).call(this));
 
         if ((typeof string === 'undefined' ? 'undefined' : _typeof(string)) === 'object' && typeof options === 'undefined') {
           options = string;
@@ -808,8 +756,8 @@
             format: options
           };
         }
-        _this.options = _jquery2.default.extend(true, {}, DEFAULTS, options);
-        _this.value = {
+        this.options = _jquery2.default.extend(true, {}, DEFAULTS, options);
+        this.value = {
           r: 0,
           g: 0,
           b: 0,
@@ -818,13 +766,11 @@
           v: 0,
           a: 1
         };
-        _this._format = false;
-        _this._matchFormat = 'HEX';
-        _this._valid = true;
+        this._format = false;
+        this._matchFormat = 'HEX';
+        this._valid = true;
 
-        _this.init(string);
-
-        return _this;
+        this.init(string);
       }
 
       _createClass(AsColor, [{
@@ -1052,7 +998,7 @@
           }
 
           if (fromRgb > fromHsv) {
-            hsv = AsColor.RGBtoHSV(this.value);
+            hsv = Converter.RGBtoHSV(this.value);
 
             if (this.value.r === 0 && this.value.g === 0 && this.value.b === 0) {
               // this.value.h = color.h;
@@ -1063,7 +1009,7 @@
             this.value.s = hsv.s;
             this.value.v = hsv.v;
           } else if (fromHsv > fromRgb) {
-            rgb = AsColor.HSVtoRGB(this.value);
+            rgb = Converter.HSVtoRGB(this.value);
             this.value.r = rgb.r;
             this.value.g = rgb.g;
             this.value.b = rgb.b;
@@ -1102,22 +1048,31 @@
       }]);
 
       return AsColor;
-    }(Converter);
+    }();
 
     var info = {
-      version: '0.3.0'
+      version: '0.3.1'
     };
 
     var OtherAsColor = _jquery2.default.asColor;
 
-    _jquery2.default.asColor = AsColor;
+    var jQueryAsColor = function jQueryAsColor() {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return new (Function.prototype.bind.apply(AsColor, [null].concat(args)))();
+    };
+
+    _jquery2.default.asColor = jQueryAsColor;
+    _jquery2.default.asColor.Constructor = AsColor;
 
     _jquery2.default.extend(_jquery2.default.asColor, {
       noConflict: function noConflict() {
-        _jquery2.default.fn.asColor = OtherAsColor;
+        _jquery2.default.asColor = OtherAsColor;
 
-        return AsColor;
+        return jQueryAsColor;
       }
-    }, info);
+    }, Converter, info);
   }
 );

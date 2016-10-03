@@ -5,8 +5,8 @@ import $ from 'jquery';
 
 const hexNames = util.flip(NAMES);
 
-class Converter {
-  static HSLtoRGB(hsl) {
+export default {
+  HSLtoRGB: function(hsl) {
     const h = hsl.h / 360;
     const s = hsl.s;
     const l = hsl.l;
@@ -20,9 +20,9 @@ class Converter {
     }
     m1 = l * 2 - m2;
     rgb = {
-      r: Converter.hueToRGB(m1, m2, h + 1 / 3),
-      g: Converter.hueToRGB(m1, m2, h),
-      b: Converter.hueToRGB(m1, m2, h - 1 / 3)
+      r: this.hueToRGB(m1, m2, h + 1 / 3),
+      g: this.hueToRGB(m1, m2, h),
+      b: this.hueToRGB(m1, m2, h - 1 / 3)
     };
     if (typeof hsl.a !== 'undefined') {
       rgb.a = hsl.a;
@@ -34,9 +34,9 @@ class Converter {
       rgb.h = hsl.h;
     }
     return rgb;
-  }
+  },
 
-  static hueToRGB(m1, m2, h) {
+  hueToRGB: function(m1, m2, h) {
     let v;
     if (h < 0) {
       h += 1;
@@ -53,9 +53,9 @@ class Converter {
       v = m1;
     }
     return Math.round(v * 255);
-  }
+  },
 
-  static RGBtoHSL(rgb) {
+  RGBtoHSL: function(rgb) {
     const r = rgb.r / 255;
     const g = rgb.g / 255;
     const b = rgb.b / 255;
@@ -89,9 +89,9 @@ class Converter {
       s,
       l
     };
-  }
+  },
 
-  static RGBtoHEX(rgb) {
+  RGBtoHEX: function(rgb) {
     let hex = [rgb.r.toString(16), rgb.g.toString(16), rgb.b.toString(16)];
 
     $.each(hex, (nr, val) => {
@@ -100,19 +100,19 @@ class Converter {
       }
     });
     return `#${hex.join('')}`;
-  }
+  },
 
-  static HSLtoHEX(hsl) {
-    const rgb = Converter.HSLtoRGB(hsl);
-    return Converter.RGBtoHEX(rgb);
-  }
+  HSLtoHEX: function(hsl) {
+    const rgb = this.HSLtoRGB(hsl);
+    return this.RGBtoHEX(rgb);
+  },
 
-  static HSVtoHEX(hsv) {
-    const rgb = Converter.HSVtoRGB(hsv);
-    return Converter.RGBtoHEX(rgb);
-  }
+  HSVtoHEX: function(hsv) {
+    const rgb = this.HSVtoRGB(hsv);
+    return this.RGBtoHEX(rgb);
+  },
 
-  static RGBtoHSV(rgb) {
+  RGBtoHSV: function(rgb) {
     const r = rgb.r / 255;
     const g = rgb.g / 255;
     const b = rgb.b / 255;
@@ -151,9 +151,9 @@ class Converter {
       s,
       v
     };
-  }
+  },
 
-  static HSVtoRGB(hsv) {
+  HSVtoRGB: function(hsv) {
     let r;
     let g;
     let b;
@@ -189,9 +189,9 @@ class Converter {
     }
 
     return rgb;
-  }
+  },
 
-  static HEXtoRGB(hex) {
+  HEXtoRGB: function(hex) {
     if (hex.length === 4) {
       hex = util.expandHex(hex);
     }
@@ -200,33 +200,33 @@ class Converter {
       g: util.parseIntFromHex(hex.substr(3, 2)),
       b: util.parseIntFromHex(hex.substr(5, 2))
     };
-  }
+  },
 
-  static isNAME(string) {
+  isNAME: function(string) {
     if (NAMES.hasOwnProperty(string)) {
       return true;
     }
     return false;
-  }
+  },
 
-  static NAMEtoHEX(name) {
+  NAMEtoHEX: function(name) {
     if (NAMES.hasOwnProperty(name)) {
       return `#${NAMES[name]}`;
     }
     return null;
-  }
+  },
 
-  static NAMEtoRGB(name) {
-    const hex = Converter.NAMEtoHEX(name);
+  NAMEtoRGB: function(name) {
+    const hex = this.NAMEtoHEX(name);
 
     if (hex) {
-      return Converter.HEXtoRGB(hex);
+      return this.HEXtoRGB(hex);
     }
     return null;
-  }
+  },
 
-  static hasNAME(rgb) {
-    let hex = Converter.RGBtoHEX(rgb);
+  hasNAME: function(rgb) {
+    let hex = this.RGBtoHEX(rgb);
 
     hex = util.shrinkHex(hex);
 
@@ -238,10 +238,10 @@ class Converter {
       return hexNames[hex];
     }
     return false;
-  }
+  },
 
-  static RGBtoNAME(rgb) {
-    const hasName = Converter.hasNAME(rgb);
+  RGBtoNAME: function(rgb) {
+    const hasName = this.hasNAME(rgb);
     if (hasName) {
       return hasName;
     }
@@ -249,5 +249,3 @@ class Converter {
     return null;
   }
 };
-
-export default Converter;

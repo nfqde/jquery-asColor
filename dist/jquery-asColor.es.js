@@ -1,5 +1,5 @@
 /**
-* jQuery asColor v0.3.0
+* jQuery asColor v0.3.1
 * https://github.com/amazingSurge/asColor
 *
 * Copyright (c) amazingSurge
@@ -22,6 +22,55 @@ var DEFAULTS = {
   invalidValue: '',
   zeroAlphaAsTransparent: true
 };
+
+function expandHex(hex) {
+  if (hex.indexOf('#') === 0) {
+    hex = hex.substr(1);
+  }
+  if (!hex) {
+    return null;
+  }
+  if (hex.length === 3) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  }
+  return hex.length === 6 ? `#${hex}` : null;
+}
+
+function shrinkHex(hex) {
+  if (hex.indexOf('#') === 0) {
+    hex = hex.substr(1);
+  }
+  if (hex.length === 6 && hex[0] === hex[1] && hex[2] === hex[3] && hex[4] === hex[5]) {
+    hex = hex[0] + hex[2] + hex[4];
+  }
+  return `#${hex}`;
+}
+
+function parseIntFromHex(val) {
+  return parseInt(val, 16);
+}
+
+function isPercentage(n) {
+  return typeof n === 'string' && n.indexOf('%') === n.length - 1;
+}
+
+function conventPercentageToRgb(n) {
+  return parseInt(Math.round(n.slice(0, -1) * 2.55), 10);
+}
+
+function convertPercentageToFloat(n) {
+  return parseFloat(n.slice(0, -1) / 100, 10);
+}
+
+function flip(o) {
+  const flipped = {};
+  for (const i in o) {
+    if (o.hasOwnProperty(i)) {
+      flipped[o[i]] = i;
+    }
+  }
+  return flipped;
+}
 
 var NAMES = {
   aliceblue: 'f0f8ff',
@@ -174,60 +223,11 @@ var NAMES = {
   yellowgreen: '9acd32'
 };
 
-function expandHex(hex) {
-  if (hex.indexOf('#') === 0) {
-    hex = hex.substr(1);
-  }
-  if (!hex) {
-    return null;
-  }
-  if (hex.length === 3) {
-    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-  }
-  return hex.length === 6 ? `#${hex}` : null;
-}
-
-function shrinkHex(hex) {
-  if (hex.indexOf('#') === 0) {
-    hex = hex.substr(1);
-  }
-  if (hex.length === 6 && hex[0] === hex[1] && hex[2] === hex[3] && hex[4] === hex[5]) {
-    hex = hex[0] + hex[2] + hex[4];
-  }
-  return `#${hex}`;
-}
-
-function parseIntFromHex(val) {
-  return parseInt(val, 16);
-}
-
-function isPercentage(n) {
-  return typeof n === 'string' && n.indexOf('%') === n.length - 1;
-}
-
-function conventPercentageToRgb(n) {
-  return parseInt(Math.round(n.slice(0, -1) * 2.55), 10);
-}
-
-function convertPercentageToFloat(n) {
-  return parseFloat(n.slice(0, -1) / 100, 10);
-}
-
-function flip(o) {
-  const flipped = {};
-  for (const i in o) {
-    if (o.hasOwnProperty(i)) {
-      flipped[o[i]] = i;
-    }
-  }
-  return flipped;
-}
-
 /* eslint no-bitwise: "off" */
 const hexNames = flip(NAMES);
 
-class Converter {
-  static HSLtoRGB(hsl) {
+var Converter = {
+  HSLtoRGB: function(hsl) {
     const h = hsl.h / 360;
     const s = hsl.s;
     const l = hsl.l;
@@ -241,9 +241,9 @@ class Converter {
     }
     m1 = l * 2 - m2;
     rgb = {
-      r: Converter.hueToRGB(m1, m2, h + 1 / 3),
-      g: Converter.hueToRGB(m1, m2, h),
-      b: Converter.hueToRGB(m1, m2, h - 1 / 3)
+      r: this.hueToRGB(m1, m2, h + 1 / 3),
+      g: this.hueToRGB(m1, m2, h),
+      b: this.hueToRGB(m1, m2, h - 1 / 3)
     };
     if (typeof hsl.a !== 'undefined') {
       rgb.a = hsl.a;
@@ -255,9 +255,9 @@ class Converter {
       rgb.h = hsl.h;
     }
     return rgb;
-  }
+  },
 
-  static hueToRGB(m1, m2, h) {
+  hueToRGB: function(m1, m2, h) {
     let v;
     if (h < 0) {
       h += 1;
@@ -274,9 +274,9 @@ class Converter {
       v = m1;
     }
     return Math.round(v * 255);
-  }
+  },
 
-  static RGBtoHSL(rgb) {
+  RGBtoHSL: function(rgb) {
     const r = rgb.r / 255;
     const g = rgb.g / 255;
     const b = rgb.b / 255;
@@ -310,9 +310,9 @@ class Converter {
       s,
       l
     };
-  }
+  },
 
-  static RGBtoHEX(rgb) {
+  RGBtoHEX: function(rgb) {
     let hex = [rgb.r.toString(16), rgb.g.toString(16), rgb.b.toString(16)];
 
     $.each(hex, (nr, val) => {
@@ -321,19 +321,19 @@ class Converter {
       }
     });
     return `#${hex.join('')}`;
-  }
+  },
 
-  static HSLtoHEX(hsl) {
-    const rgb = Converter.HSLtoRGB(hsl);
-    return Converter.RGBtoHEX(rgb);
-  }
+  HSLtoHEX: function(hsl) {
+    const rgb = this.HSLtoRGB(hsl);
+    return this.RGBtoHEX(rgb);
+  },
 
-  static HSVtoHEX(hsv) {
-    const rgb = Converter.HSVtoRGB(hsv);
-    return Converter.RGBtoHEX(rgb);
-  }
+  HSVtoHEX: function(hsv) {
+    const rgb = this.HSVtoRGB(hsv);
+    return this.RGBtoHEX(rgb);
+  },
 
-  static RGBtoHSV(rgb) {
+  RGBtoHSV: function(rgb) {
     const r = rgb.r / 255;
     const g = rgb.g / 255;
     const b = rgb.b / 255;
@@ -372,9 +372,9 @@ class Converter {
       s,
       v
     };
-  }
+  },
 
-  static HSVtoRGB(hsv) {
+  HSVtoRGB: function(hsv) {
     let r;
     let g;
     let b;
@@ -410,9 +410,9 @@ class Converter {
     }
 
     return rgb;
-  }
+  },
 
-  static HEXtoRGB(hex) {
+  HEXtoRGB: function(hex) {
     if (hex.length === 4) {
       hex = expandHex(hex);
     }
@@ -421,33 +421,33 @@ class Converter {
       g: parseIntFromHex(hex.substr(3, 2)),
       b: parseIntFromHex(hex.substr(5, 2))
     };
-  }
+  },
 
-  static isNAME(string) {
+  isNAME: function(string) {
     if (NAMES.hasOwnProperty(string)) {
       return true;
     }
     return false;
-  }
+  },
 
-  static NAMEtoHEX(name) {
+  NAMEtoHEX: function(name) {
     if (NAMES.hasOwnProperty(name)) {
       return `#${NAMES[name]}`;
     }
     return null;
-  }
+  },
 
-  static NAMEtoRGB(name) {
-    const hex = Converter.NAMEtoHEX(name);
+  NAMEtoRGB: function(name) {
+    const hex = this.NAMEtoHEX(name);
 
     if (hex) {
-      return Converter.HEXtoRGB(hex);
+      return this.HEXtoRGB(hex);
     }
     return null;
-  }
+  },
 
-  static hasNAME(rgb) {
-    let hex = Converter.RGBtoHEX(rgb);
+  hasNAME: function(rgb) {
+    let hex = this.RGBtoHEX(rgb);
 
     hex = shrinkHex(hex);
 
@@ -459,17 +459,17 @@ class Converter {
       return hexNames[hex];
     }
     return false;
-  }
+  },
 
-  static RGBtoNAME(rgb) {
-    const hasName = Converter.hasNAME(rgb);
+  RGBtoNAME: function(rgb) {
+    const hasName = this.hasNAME(rgb);
     if (hasName) {
       return hasName;
     }
 
     return null;
   }
-}
+};
 
 const CSS_INTEGER = '[-\\+]?\\d+%?';
 const CSS_NUMBER = '[-\\+]?\\d*\\.\\d+%?';
@@ -626,10 +626,8 @@ if (!String.prototype.includes) {
   };
 }
 
-class AsColor extends Converter {
+class AsColor {
   constructor(string, options) {
-    super();
-
     if (typeof string === 'object' && typeof options === 'undefined') {
       options = string;
       string = undefined;
@@ -838,7 +836,7 @@ class AsColor extends Converter {
       }
     }
     if (fromRgb > fromHsv) {
-      hsv = AsColor.RGBtoHSV(this.value);
+      hsv = Converter.RGBtoHSV(this.value);
       if (this.value.r === 0 && this.value.g === 0 && this.value.b === 0) {
         // this.value.h = color.h;
       } else {
@@ -848,7 +846,7 @@ class AsColor extends Converter {
       this.value.s = hsv.s;
       this.value.v = hsv.v;
     } else if (fromHsv > fromRgb) {
-      rgb = AsColor.HSVtoRGB(this.value);
+      rgb = Converter.HSVtoRGB(this.value);
       this.value.r = rgb.r;
       this.value.g = rgb.g;
       this.value.b = rgb.b;
@@ -880,16 +878,21 @@ class AsColor extends Converter {
 }
 
 var info = {
-  version:'0.3.0'
+  version:'0.3.1'
 };
 
 const OtherAsColor = $.asColor;
 
-$.asColor = AsColor;
+const jQueryAsColor = function(...args) {
+  return new AsColor(...args);
+}
+
+$.asColor = jQueryAsColor;
+$.asColor.Constructor = AsColor;
 
 $.extend($.asColor, {
   noConflict: function() {
-    $.fn.asColor = OtherAsColor;
-    return AsColor;
+    $.asColor = OtherAsColor;
+    return jQueryAsColor;
   }
-}, info);
+}, Converter, info);

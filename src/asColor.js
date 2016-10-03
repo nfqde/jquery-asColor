@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import DEFAULTS from './defaults';
-import Converter from './converter';
 import ColorStrings from './colorStrings';
+import Converter from './converter';
 
 /* eslint no-extend-native: "off" */
 if (!String.prototype.includes) {
@@ -18,10 +18,8 @@ if (!String.prototype.includes) {
   };
 }
 
-class AsColor extends Converter {
+class AsColor {
   constructor(string, options) {
-    super();
-
     if (typeof string === 'object' && typeof options === 'undefined') {
       options = string;
       string = undefined;
@@ -230,7 +228,7 @@ class AsColor extends Converter {
       }
     }
     if (fromRgb > fromHsv) {
-      hsv = AsColor.RGBtoHSV(this.value);
+      hsv = Converter.RGBtoHSV(this.value);
       if (this.value.r === 0 && this.value.g === 0 && this.value.b === 0) {
         // this.value.h = color.h;
       } else {
@@ -240,7 +238,7 @@ class AsColor extends Converter {
       this.value.s = hsv.s;
       this.value.v = hsv.v;
     } else if (fromHsv > fromRgb) {
-      rgb = AsColor.HSVtoRGB(this.value);
+      rgb = Converter.HSVtoRGB(this.value);
       this.value.r = rgb.r;
       this.value.g = rgb.g;
       this.value.b = rgb.b;
