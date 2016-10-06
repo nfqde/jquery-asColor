@@ -13,6 +13,8 @@ $.asColor = jQueryAsColor;
 $.asColor.Constructor = AsColor;
 
 $.extend($.asColor, {
+  matchString: AsColor.matchString,
+  setDefaults: AsColor.setDefaults,
   noConflict: function() {
     $.asColor = OtherAsColor;
     return jQueryAsColor;

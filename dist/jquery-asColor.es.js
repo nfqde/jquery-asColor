@@ -1,5 +1,5 @@
 /**
-* jQuery asColor v0.3.3
+* jQuery asColor v0.3.4
 * https://github.com/amazingSurge/asColor
 *
 * Copyright (c) amazingSurge
@@ -878,7 +878,7 @@ class AsColor {
 }
 
 var info = {
-  version:'0.3.3'
+  version:'0.3.4'
 };
 
 const OtherAsColor = $.asColor;
@@ -891,6 +891,8 @@ $.asColor = jQueryAsColor;
 $.asColor.Constructor = AsColor;
 
 $.extend($.asColor, {
+  matchString: AsColor.matchString,
+  setDefaults: AsColor.setDefaults,
   noConflict: function() {
     $.asColor = OtherAsColor;
     return jQueryAsColor;
