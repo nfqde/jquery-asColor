@@ -1,5 +1,5 @@
 /**
-* jQuery asColor v0.3.2
+* jQuery asColor v0.3.3
 * https://github.com/amazingSurge/asColor
 *
 * Copyright (c) amazingSurge
@@ -7,7 +7,7 @@
 */
 (function(global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['exports', 'jquery'], factory);
+    define('AsColor', ['exports', 'jquery'], factory);
   } else if (typeof exports !== "undefined") {
     factory(exports, require('jquery'));
   } else {
@@ -15,7 +15,7 @@
       exports: {}
     };
     factory(mod.exports, global.jQuery);
-    global.jqueryAsColorEs = mod.exports;
+    global.AsColor = mod.exports;
   }
 })(this,
 
@@ -1055,7 +1055,7 @@
     }();
 
     var info = {
-      version: '0.3.2'
+      version: '0.3.3'
     };
 
     var OtherAsColor = _jquery2.default.asColor;

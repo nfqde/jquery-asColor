@@ -65,7 +65,8 @@ export function scripts(src = config.scripts.src, dest = config.scripts.dest, en
               "jquery": "jQuery"
             }
           }]
-        ]
+        ],
+        "moduleId": "AsColor"
       }))
       .pipe(header(config.banner))
       .pipe(beautify({

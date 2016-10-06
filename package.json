@@ -2,7 +2,7 @@
   "name": "jquery-asColor",
   "title": "jQuery asColor",
   "description": "A jquery plugin used to parse css color string and convent it to other color formats. It support rgb, rgba, hex, hsl, hsla.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "homepage": "https://github.com/amazingSurge/asColor",
   "author": {
     "name": "amazingSurge",
