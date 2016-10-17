@@ -42,6 +42,11 @@ bower install jquery-asColor --save
 npm install jquery-asColor --save
 ```
 
+#### Install From Yarn
+```sh
+yarn add jquery-asColor
+```
+
 #### Build From Source
 If you want build from source:
 
