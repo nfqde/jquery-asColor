@@ -144,3 +144,5 @@ Session.vim
 # NotepadPP #
 ##############
 *.bak
+
+.idea

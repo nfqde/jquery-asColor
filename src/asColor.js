@@ -91,7 +91,11 @@ class AsColor {
       let rgb;
       this._valid = false;
       for (let i in ColorStrings) {
-        if ((matched = ColorStrings[i].match.exec(string)) !== null) {
+        let match = ColorStrings[i].match;
+        if (this.options.customValueMatch) {
+          match = this.options.customValueMatch;
+        }
+        if ((matched = match.exec(string)) !== null) {
           rgb = ColorStrings[i].parse(matched);
 
           if (rgb) {
@@ -252,7 +256,11 @@ class AsColor {
       let matched = null;
       let rgb;
       for (const i in ColorStrings) {
-        if ((matched = ColorStrings[i].match.exec(string)) !== null) {
+        let match = ColorStrings[i].match;
+        if (this.options.customValueMatch) {
+          match = this.options.customValueMatch;
+        }
+        if ((matched = match.exec(string)) !== null) {
           rgb = ColorStrings[i].parse(matched);
 
           if (rgb) {

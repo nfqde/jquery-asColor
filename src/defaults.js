@@ -11,5 +11,6 @@ export default {
   },
   nameDegradation: 'HEX',
   invalidValue: '',
+  customValueMatch: null,
   zeroAlphaAsTransparent: true
 };

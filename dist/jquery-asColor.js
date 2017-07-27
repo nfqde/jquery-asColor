@@ -5,7 +5,9 @@
 * Copyright (c) amazingSurge
 * Released under the LGPL-3.0 license
 */
-(function(global, factory) {
+(
+
+  function(global, factory) {
   if (typeof define === "function" && define.amd) {
     define('AsColor', ['exports', 'jquery'], factory);
   } else if (typeof exports !== "undefined") {
@@ -17,7 +19,8 @@
     factory(mod.exports, global.jQuery);
     global.AsColor = mod.exports;
   }
-})(this,
+}
+)(this,
 
   function(exports, _jquery) {
     'use strict';
@@ -88,6 +91,7 @@
       },
       nameDegradation: 'HEX',
       invalidValue: '',
+      customValueMatch: null,
       zeroAlphaAsTransparent: true
     };
 
@@ -835,8 +839,13 @@
             this._valid = false;
 
             for (var i in ColorStrings) {
+              var match = ColorStrings[i].match;
 
-              if ((matched = ColorStrings[i].match.exec(string)) !== null) {
+              if (this.options.customValueMatch) {
+                match = this.options.customValueMatch;
+              }
+
+              if ((matched = match.exec(string)) !== null) {
                 rgb = ColorStrings[i].parse(matched);
 
                 if (rgb) {
@@ -1030,8 +1039,13 @@
             var rgb = void 0;
 
             for (var i in ColorStrings) {
+              var match = ColorStrings[i].match;
 
-              if ((matched = ColorStrings[i].match.exec(string)) !== null) {
+              if (this.options.customValueMatch) {
+                match = this.options.customValueMatch;
+              }
+
+              if ((matched = match.exec(string)) !== null) {
                 rgb = ColorStrings[i].parse(matched);
 
                 if (rgb) {
