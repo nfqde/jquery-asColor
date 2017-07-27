@@ -778,6 +778,10 @@
         this._matchFormat = 'HEX';
         this._valid = true;
 
+        if (this.options.customValueMatch) {
+          ColorStrings[options.nameDegradation].match = this.options.customValueMatch;
+        }
+
         this.init(string);
       }
 
@@ -839,13 +843,8 @@
             this._valid = false;
 
             for (var i in ColorStrings) {
-              var match = ColorStrings[i].match;
 
-              if (this.options.customValueMatch) {
-                match = this.options.customValueMatch;
-              }
-
-              if ((matched = match.exec(string)) !== null) {
+              if ((matched = ColorStrings[i].match.exec(string)) !== null) {
                 rgb = ColorStrings[i].parse(matched);
 
                 if (rgb) {
@@ -1039,13 +1038,8 @@
             var rgb = void 0;
 
             for (var i in ColorStrings) {
-              var match = ColorStrings[i].match;
 
-              if (this.options.customValueMatch) {
-                match = this.options.customValueMatch;
-              }
-
-              if ((matched = match.exec(string)) !== null) {
+              if ((matched = ColorStrings[i].match.exec(string)) !== null) {
                 rgb = ColorStrings[i].parse(matched);
 
                 if (rgb) {
